@@ -1,0 +1,21 @@
+language: python
+
+python:
+  - 3.5
+
+cache: pip
+
+install:
+  - pip install -q -r requirements.txt
+  - pip install -q flake8
+
+script:
+  - flake8 .
+  - bash run_tests.sh
+
+notifications:
+  email: false
+
+branches:
+  only:
+    - master
