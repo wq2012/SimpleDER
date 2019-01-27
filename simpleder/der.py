@@ -42,14 +42,15 @@ def check_input(hyp):
                 "Each tuple must have the elements: (speaker, start, end).")
         if not isinstance(element[0], str):
             raise TypeError("Speaker must be a string.")
-        if not isinstance(element[1], float) or not instance(element[2], float):
+        if not isinstance(element[1], float) or not isinstance(
+                element[2], float):
             raise TypeError("Start and end must be float numbers.")
-        if elememt[1] > element[2]:
+        if element[1] > element[2]:
             raise ValueError("Start must not be larger than end.")
         num_elements = len(hyp)
         for i in range(num_elements - 1):
             for j in range(i + 1, num_elements):
-                if compute_intersection_length(elements[i], elements[j]) > 0.0:
+                if compute_intersection_length(element[i], element[j]) > 0.0:
                     raise ValueError(
                         "Input must not contain overlapped speech.")
 
