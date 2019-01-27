@@ -1,4 +1,4 @@
-# SimpleDER [![Build Status](https://travis-ci.org/wq2012/SimpleDER.svg?branch=master)](https://travis-ci.org/wq2012/SimpleDER)
+# SimpleDER [![Build Status](https://travis-ci.org/wq2012/SimpleDER.svg?branch=master)](https://travis-ci.org/wq2012/SimpleDER) [![PyPI Version](https://img.shields.io/pypi/v/simpleder.svg)](https://pypi.python.org/pypi/simpleder) [![Python Versions](https://img.shields.io/pypi/pyversions/simpleder.svg)](https://pypi.org/project/simpleder)
 
 ## Overview
 
@@ -16,6 +16,22 @@ To learn more about speaker diarization, here is a curated list of resources:
 [awesome-diarization](https://github.com/wq2012/awesome-diarization).
 
 ## Tutorial
+
+### Install
+
+Install the package by:
+
+```bash
+pip3 install simpleder
+```
+
+or
+
+```bash
+python3 -m pip install simpleder
+```
+
+### API
 
 Here is a minimal example:
 
