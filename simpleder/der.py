@@ -82,7 +82,20 @@ def compute_merged_total_length(ref, hyp):
     Returns:
         a float number for the union total length
     """
-    pass
+    # Remove speaker label and merge.
+    merged = [(element[1], element[2]) for element in (ref + hyp)]
+    # Sort by start.
+    merged = sorted(merged, key=lambda element: element[0])
+    num_elements = len(merged)
+    for i in reversed(range(num_elements - 1)):
+        if merged[i][1] >= merged[i + 1][0]:
+            max_end = max(merged[i][1], merged[i + 1][1])
+            merged[i] = (merged[i][0], max_end)
+            del merged[i + 1]
+    total_length = 0.0
+    for element in merged:
+        total_length += element[1] - element[0]
+    return total_length
 
 
 def build_speaker_index(hyp):
