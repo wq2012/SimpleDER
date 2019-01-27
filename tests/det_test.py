@@ -24,6 +24,30 @@ class TestCheckInput(unittest.TestCase):
         der.check_input(ref)
         der.check_input(hyp)
 
+    def test_missing_speaker(self):
+        hyp = [("A", 1.0, 3.0),
+               ("B", 4.0, 7.1),
+               ("A", 7.0, 9.0),
+               (10.0, 13.0)]
+        with self.assertRaises(TypeError):
+            der.check_input(hyp)
+
+    def test_wrong_speaker_type(self):
+        hyp = [("A", 1.0, 3.0),
+               ("B", 4.0, 7.1),
+               ("A", 7.0, 9.0),
+               (3, 10.0, 13.0)]
+        with self.assertRaises(TypeError):
+            der.check_input(hyp)
+
+    def test_overlap(self):
+        hyp = [("A", 1.0, 3.0),
+               ("B", 4.0, 7.1),
+               ("A", 7.0, 9.0),
+               ("C", 10.0, 13.0)]
+        with self.assertRaises(ValueError):
+            der.check_input(hyp)
+
 
 class TestComputeIntersectionLength(unittest.TestCase):
     """Tests for the compute_intersection_length function."""
