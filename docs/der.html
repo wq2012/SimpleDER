@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.5.2.dev16+gc8de804" />
+<title>simpleder.der API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}#index .two-column{column-count:2}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.name small{font-weight:normal}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase;cursor:pointer}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title"><code>simpleder.der</code> module</h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+import numpy as np
+from scipy import optimize
+
+
+def check_input(hyp):
+    &#34;&#34;&#34;Check whether a hypothesis/reference is valid.
+
+    Args:
+        hyp: a list of tuples, where each tuple is (speaker, start, end)
+            of type (string, float, float)
+
+    Raises:
+        TypeError: if the type of `hyp` is incorrect
+        ValueError: if some tuple has start &gt; end; or if two tuples intersect
+            with each other
+    &#34;&#34;&#34;
+    if not isinstance(hyp, list):
+        raise TypeError(&#34;Input must be a list.&#34;)
+    for element in hyp:
+        if not isinstance(element, tuple):
+            raise TypeError(&#34;Input must be a list of tuples.&#34;)
+        if len(element) != 3:
+            raise TypeError(
+                &#34;Each tuple must have the elements: (speaker, start, end).&#34;)
+        if not isinstance(element[0], str):
+            raise TypeError(&#34;Speaker must be a string.&#34;)
+        if not isinstance(element[1], float) or not isinstance(
+                element[2], float):
+            raise TypeError(&#34;Start and end must be float numbers.&#34;)
+        if element[1] &gt; element[2]:
+            raise ValueError(&#34;Start must not be larger than end.&#34;)
+    num_elements = len(hyp)
+    for i in range(num_elements - 1):
+        for j in range(i + 1, num_elements):
+            if compute_intersection_length(hyp[i], hyp[j]) &gt; 0.0:
+                raise ValueError(
+                    &#34;Input must not contain overlapped speech.&#34;)
+
+
+def compute_total_length(hyp):
+    &#34;&#34;&#34;Compute total length of a hypothesis/reference.
+
+    Args:
+        hyp: a list of tuples, where each tuple is (speaker, start, end)
+            of type (string, float, float)
+
+    Returns:
+        a float number for the total length
+    &#34;&#34;&#34;
+    total_length = 0.0
+    for element in hyp:
+        total_length += element[2] - element[1]
+    return total_length
+
+
+def compute_intersection_length(A, B):
+    &#34;&#34;&#34;Compute the intersection length of two tuples.
+    Args:
+        A: a (speaker, start, end) tuple of type (string, float, float)
+        B: a (speaker, start, end) tuple of type (string, float, float)
+
+    Returns:
+        a float number of the intersection between `A` and `B`
+    &#34;&#34;&#34;
+    max_start = max(A[1], B[1])
+    min_end = min(A[2], B[2])
+    return max(0.0, min_end - max_start)
+
+
+def compute_merged_total_length(ref, hyp):
+    &#34;&#34;&#34;Compute the total length of the union of reference and hypothesis.
+
+    Args:
+        ref: a list of tuples for the ground truth, where each tuple is
+            (speaker, start, end) of type (string, float, float)
+        hyp: a list of tuples for the diarization result hypothesis, same type
+            as `ref`
+
+    Returns:
+        a float number for the union total length
+    &#34;&#34;&#34;
+    # Remove speaker label and merge.
+    merged = [(element[1], element[2]) for element in (ref + hyp)]
+    # Sort by start.
+    merged = sorted(merged, key=lambda element: element[0])
+    num_elements = len(merged)
+    for i in reversed(range(num_elements - 1)):
+        if merged[i][1] &gt;= merged[i + 1][0]:
+            max_end = max(merged[i][1], merged[i + 1][1])
+            merged[i] = (merged[i][0], max_end)
+            del merged[i + 1]
+    total_length = 0.0
+    for element in merged:
+        total_length += element[1] - element[0]
+    return total_length
+
+
+def build_speaker_index(hyp):
+    &#34;&#34;&#34;Build the index for the speakers.
+
+    Args:
+        hyp: a list of tuples, where each tuple is (speaker, start, end)
+            of type (string, float, float)
+
+    Returns:
+        a dict from speaker to integer
+    &#34;&#34;&#34;
+    speaker_set = sorted({element[0] for element in hyp})
+    index = {speaker: i for i, speaker in enumerate(speaker_set)}
+    return index
+
+
+def build_cost_matrix(ref, hyp):
+    &#34;&#34;&#34;Build the cost matrix.
+
+    Args:
+        ref: a list of tuples for the ground truth, where each tuple is
+            (speaker, start, end) of type (string, float, float)
+        hyp: a list of tuples for the diarization result hypothesis, same type
+            as `ref`
+
+    Returns:
+        a 2-dim numpy array, whose element (i, j) is the overlap between
+            `i`th reference speaker and `j`th hypothesis speaker
+    &#34;&#34;&#34;
+    ref_index = build_speaker_index(ref)
+    hyp_index = build_speaker_index(hyp)
+    cost_matrix = np.zeros((len(ref_index), len(hyp_index)))
+    for ref_element in ref:
+        for hyp_element in hyp:
+            i = ref_index[ref_element[0]]
+            j = hyp_index[hyp_element[0]]
+            cost_matrix[i, j] += compute_intersection_length(
+                ref_element, hyp_element)
+    return cost_matrix
+
+
+def DER(ref, hyp):
+    &#34;&#34;&#34;Compute Diarization Error Rate.
+
+    Args:
+        ref: a list of tuples for the ground truth, where each tuple is
+            (speaker, start, end) of type (string, float, float)
+        hyp: a list of tuples for the diarization result hypothesis, same type
+            as `ref`
+
+    Returns:
+        a float number for the Diarization Error Rate
+    &#34;&#34;&#34;
+    check_input(ref)
+    check_input(hyp)
+    ref_total_length = compute_total_length(ref)
+    cost_matrix = build_cost_matrix(ref, hyp)
+    row_index, col_index = optimize.linear_sum_assignment(-cost_matrix)
+    optimal_match_overlap = cost_matrix[row_index, col_index].sum()
+    union_total_length = compute_merged_total_length(ref, hyp)
+    der = (union_total_length - optimal_match_overlap) / ref_total_length
+    return der</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="simpleder.der.DER"><code class="name flex">
+<span>def <span class="ident">DER</span></span>(<span>ref, hyp)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Compute Diarization Error Rate.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>ref</code></strong></dt>
+<dd>a list of tuples for the ground truth, where each tuple is
+(speaker, start, end) of type (string, float, float)</dd>
+<dt><strong><code>hyp</code></strong></dt>
+<dd>a list of tuples for the diarization result hypothesis, same type
+as <code>ref</code></dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>a float number for the Diarization Error Rate</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def DER(ref, hyp):
+    &#34;&#34;&#34;Compute Diarization Error Rate.
+
+    Args:
+        ref: a list of tuples for the ground truth, where each tuple is
+            (speaker, start, end) of type (string, float, float)
+        hyp: a list of tuples for the diarization result hypothesis, same type
+            as `ref`
+
+    Returns:
+        a float number for the Diarization Error Rate
+    &#34;&#34;&#34;
+    check_input(ref)
+    check_input(hyp)
+    ref_total_length = compute_total_length(ref)
+    cost_matrix = build_cost_matrix(ref, hyp)
+    row_index, col_index = optimize.linear_sum_assignment(-cost_matrix)
+    optimal_match_overlap = cost_matrix[row_index, col_index].sum()
+    union_total_length = compute_merged_total_length(ref, hyp)
+    der = (union_total_length - optimal_match_overlap) / ref_total_length
+    return der</code></pre>
+</details>
+</dd>
+<dt id="simpleder.der.build_cost_matrix"><code class="name flex">
+<span>def <span class="ident">build_cost_matrix</span></span>(<span>ref, hyp)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Build the cost matrix.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>ref</code></strong></dt>
+<dd>a list of tuples for the ground truth, where each tuple is
+(speaker, start, end) of type (string, float, float)</dd>
+<dt><strong><code>hyp</code></strong></dt>
+<dd>a list of tuples for the diarization result hypothesis, same type
+as <code>ref</code></dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>a 2-dim numpy array, whose element (i, j) is the overlap between
+<code>i</code>th reference speaker and <code>j</code>th hypothesis speaker</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def build_cost_matrix(ref, hyp):
+    &#34;&#34;&#34;Build the cost matrix.
+
+    Args:
+        ref: a list of tuples for the ground truth, where each tuple is
+            (speaker, start, end) of type (string, float, float)
+        hyp: a list of tuples for the diarization result hypothesis, same type
+            as `ref`
+
+    Returns:
+        a 2-dim numpy array, whose element (i, j) is the overlap between
+            `i`th reference speaker and `j`th hypothesis speaker
+    &#34;&#34;&#34;
+    ref_index = build_speaker_index(ref)
+    hyp_index = build_speaker_index(hyp)
+    cost_matrix = np.zeros((len(ref_index), len(hyp_index)))
+    for ref_element in ref:
+        for hyp_element in hyp:
+            i = ref_index[ref_element[0]]
+            j = hyp_index[hyp_element[0]]
+            cost_matrix[i, j] += compute_intersection_length(
+                ref_element, hyp_element)
+    return cost_matrix</code></pre>
+</details>
+</dd>
+<dt id="simpleder.der.build_speaker_index"><code class="name flex">
+<span>def <span class="ident">build_speaker_index</span></span>(<span>hyp)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Build the index for the speakers.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>hyp</code></strong></dt>
+<dd>a list of tuples, where each tuple is (speaker, start, end)
+of type (string, float, float)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>a dict from speaker to integer</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def build_speaker_index(hyp):
+    &#34;&#34;&#34;Build the index for the speakers.
+
+    Args:
+        hyp: a list of tuples, where each tuple is (speaker, start, end)
+            of type (string, float, float)
+
+    Returns:
+        a dict from speaker to integer
+    &#34;&#34;&#34;
+    speaker_set = sorted({element[0] for element in hyp})
+    index = {speaker: i for i, speaker in enumerate(speaker_set)}
+    return index</code></pre>
+</details>
+</dd>
+<dt id="simpleder.der.check_input"><code class="name flex">
+<span>def <span class="ident">check_input</span></span>(<span>hyp)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Check whether a hypothesis/reference is valid.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>hyp</code></strong></dt>
+<dd>a list of tuples, where each tuple is (speaker, start, end)
+of type (string, float, float)</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><strong><code>TypeError</code></strong></dt>
+<dd>if the type of <code>hyp</code> is incorrect</dd>
+<dt><strong><code>ValueError</code></strong></dt>
+<dd>if some tuple has start &gt; end; or if two tuples intersect
+with each other</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def check_input(hyp):
+    &#34;&#34;&#34;Check whether a hypothesis/reference is valid.
+
+    Args:
+        hyp: a list of tuples, where each tuple is (speaker, start, end)
+            of type (string, float, float)
+
+    Raises:
+        TypeError: if the type of `hyp` is incorrect
+        ValueError: if some tuple has start &gt; end; or if two tuples intersect
+            with each other
+    &#34;&#34;&#34;
+    if not isinstance(hyp, list):
+        raise TypeError(&#34;Input must be a list.&#34;)
+    for element in hyp:
+        if not isinstance(element, tuple):
+            raise TypeError(&#34;Input must be a list of tuples.&#34;)
+        if len(element) != 3:
+            raise TypeError(
+                &#34;Each tuple must have the elements: (speaker, start, end).&#34;)
+        if not isinstance(element[0], str):
+            raise TypeError(&#34;Speaker must be a string.&#34;)
+        if not isinstance(element[1], float) or not isinstance(
+                element[2], float):
+            raise TypeError(&#34;Start and end must be float numbers.&#34;)
+        if element[1] &gt; element[2]:
+            raise ValueError(&#34;Start must not be larger than end.&#34;)
+    num_elements = len(hyp)
+    for i in range(num_elements - 1):
+        for j in range(i + 1, num_elements):
+            if compute_intersection_length(hyp[i], hyp[j]) &gt; 0.0:
+                raise ValueError(
+                    &#34;Input must not contain overlapped speech.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="simpleder.der.compute_intersection_length"><code class="name flex">
+<span>def <span class="ident">compute_intersection_length</span></span>(<span>A, B)</span>
+</code></dt>
+<dd>
+<section class="desc"><dl>
+<dt>Compute the intersection length of two tuples.</dt>
+<dt><strong><code>Args</code></strong></dt>
+<dd>A: a (speaker, start, end) tuple of type (string, float, float)
+B: a (speaker, start, end) tuple of type (string, float, float)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>a float number of the intersection between <code>A</code> and <code>B</code></p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def compute_intersection_length(A, B):
+    &#34;&#34;&#34;Compute the intersection length of two tuples.
+    Args:
+        A: a (speaker, start, end) tuple of type (string, float, float)
+        B: a (speaker, start, end) tuple of type (string, float, float)
+
+    Returns:
+        a float number of the intersection between `A` and `B`
+    &#34;&#34;&#34;
+    max_start = max(A[1], B[1])
+    min_end = min(A[2], B[2])
+    return max(0.0, min_end - max_start)</code></pre>
+</details>
+</dd>
+<dt id="simpleder.der.compute_merged_total_length"><code class="name flex">
+<span>def <span class="ident">compute_merged_total_length</span></span>(<span>ref, hyp)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Compute the total length of the union of reference and hypothesis.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>ref</code></strong></dt>
+<dd>a list of tuples for the ground truth, where each tuple is
+(speaker, start, end) of type (string, float, float)</dd>
+<dt><strong><code>hyp</code></strong></dt>
+<dd>a list of tuples for the diarization result hypothesis, same type
+as <code>ref</code></dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>a float number for the union total length</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def compute_merged_total_length(ref, hyp):
+    &#34;&#34;&#34;Compute the total length of the union of reference and hypothesis.
+
+    Args:
+        ref: a list of tuples for the ground truth, where each tuple is
+            (speaker, start, end) of type (string, float, float)
+        hyp: a list of tuples for the diarization result hypothesis, same type
+            as `ref`
+
+    Returns:
+        a float number for the union total length
+    &#34;&#34;&#34;
+    # Remove speaker label and merge.
+    merged = [(element[1], element[2]) for element in (ref + hyp)]
+    # Sort by start.
+    merged = sorted(merged, key=lambda element: element[0])
+    num_elements = len(merged)
+    for i in reversed(range(num_elements - 1)):
+        if merged[i][1] &gt;= merged[i + 1][0]:
+            max_end = max(merged[i][1], merged[i + 1][1])
+            merged[i] = (merged[i][0], max_end)
+            del merged[i + 1]
+    total_length = 0.0
+    for element in merged:
+        total_length += element[1] - element[0]
+    return total_length</code></pre>
+</details>
+</dd>
+<dt id="simpleder.der.compute_total_length"><code class="name flex">
+<span>def <span class="ident">compute_total_length</span></span>(<span>hyp)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Compute total length of a hypothesis/reference.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>hyp</code></strong></dt>
+<dd>a list of tuples, where each tuple is (speaker, start, end)
+of type (string, float, float)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>a float number for the total length</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def compute_total_length(hyp):
+    &#34;&#34;&#34;Compute total length of a hypothesis/reference.
+
+    Args:
+        hyp: a list of tuples, where each tuple is (speaker, start, end)
+            of type (string, float, float)
+
+    Returns:
+        a float number for the total length
+    &#34;&#34;&#34;
+    total_length = 0.0
+    for element in hyp:
+        total_length += element[2] - element[1]
+    return total_length</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="simpleder" href="index.html">simpleder</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="simpleder.der.DER" href="#simpleder.der.DER">DER</a></code></li>
+<li><code><a title="simpleder.der.build_cost_matrix" href="#simpleder.der.build_cost_matrix">build_cost_matrix</a></code></li>
+<li><code><a title="simpleder.der.build_speaker_index" href="#simpleder.der.build_speaker_index">build_speaker_index</a></code></li>
+<li><code><a title="simpleder.der.check_input" href="#simpleder.der.check_input">check_input</a></code></li>
+<li><code><a title="simpleder.der.compute_intersection_length" href="#simpleder.der.compute_intersection_length">compute_intersection_length</a></code></li>
+<li><code><a title="simpleder.der.compute_merged_total_length" href="#simpleder.der.compute_merged_total_length">compute_merged_total_length</a></code></li>
+<li><code><a title="simpleder.der.compute_total_length" href="#simpleder.der.compute_total_length">compute_total_length</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.5.2.dev16+gc8de804</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
