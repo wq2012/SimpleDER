@@ -108,7 +108,7 @@ def build_speaker_index(hyp):
     Returns:
         a dict from speaker to integer
     """
-    speaker_set = {element[0] for element in hyp}
+    speaker_set = sorted({element[0] for element in hyp})
     index = {speaker: i for i, speaker in enumerate(speaker_set)}
     return index
 
@@ -128,7 +128,7 @@ def build_cost_matrix(ref, hyp):
     """
     ref_index = build_speaker_index(ref)
     hyp_index = build_speaker_index(hyp)
-    cost_matrix = np.zeros(len(ref_index), len(hyp_index))
+    cost_matrix = np.zeros((len(ref_index), len(hyp_index)))
     for ref_element in ref:
         for hyp_element in hyp:
             i = ref_index[ref_element[0]]
@@ -154,8 +154,8 @@ def DER(ref, hyp):
     check_input(hyp)
     ref_total_length = compute_total_length(ref)
     cost_matrix = build_cost_matrix(ref, hyp)
-    row_index, col_index = optimize.linear_sum_assignment(-count_matrix)
-    optimal_match_overlap = count_matrix[row_index, col_index].sum()
+    row_index, col_index = optimize.linear_sum_assignment(-cost_matrix)
+    optimal_match_overlap = cost_matrix[row_index, col_index].sum()
     union_total_length = compute_merged_total_length(ref, hyp)
     der = (union_total_length - optimal_match_overlap) / ref_total_length
     return der
