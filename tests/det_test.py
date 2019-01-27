@@ -135,5 +135,75 @@ class TestBuildCostMatrix(unittest.TestCase):
         self.assertTrue(np.allclose(expected, cost_matrix, atol=0.0001))
 
 
+class TestDER(unittest.TestCase):
+    """Tests for the DER function."""
+
+    def test_single_tuple_same(self):
+        ref = [("A", 0.0, 1.0)]
+        hyp = [("B", 0.0, 1.0)]
+        self.assertEqual(0.0, der.DER(ref, hyp))
+
+    def test_single_tuple_all_miss(self):
+        ref = [("A", 0.0, 1.0)]
+        hyp = []
+        self.assertEqual(1.0, der.DER(ref, hyp))
+
+    def test_single_tuple_separate(self):
+        ref = [("A", 0.0, 1.0)]
+        hyp = [("B", 1.0, 2.0)]
+        self.assertEqual(2.0, der.DER(ref, hyp))
+
+    def test_single_tuple_half_miss(self):
+        ref = [("A", 0.0, 1.0)]
+        hyp = [("B", 0.0, 0.5)]
+        self.assertEqual(0.5, der.DER(ref, hyp))
+
+    def test_single_tuple_half_different(self):
+        ref = [("A", 0.0, 1.0)]
+        hyp = [("B", 0.0, 0.5),
+               ("C", 0.5, 1.0)]
+        self.assertEqual(0.5, der.DER(ref, hyp))
+
+    def test_two_tuples_same(self):
+        ref = [("A", 0.0, 0.5),
+               ("B", 0.5, 1.0)]
+        hyp = [("B", 0.0, 0.5),
+               ("C", 0.5, 1.0)]
+        self.assertEqual(0.0, der.DER(ref, hyp))
+
+    def test_two_tuples_half_miss(self):
+        ref = [("A", 0.0, 0.5),
+               ("B", 0.5, 1.0)]
+        hyp = [("B", 0.0, 0.25),
+               ("C", 0.5, 0.75)]
+        self.assertEqual(0.5, der.DER(ref, hyp))
+
+    def test_two_tuples_one_quarter_correct(self):
+        ref = [("A", 0.0, 0.5),
+               ("B", 0.5, 1.0)]
+        hyp = [("B", 0.0, 0.25),
+               ("C", 0.25, 0.5)]
+        self.assertEqual(0.75, der.DER(ref, hyp))
+
+    def test_two_tuples_half_correct(self):
+        ref = [("A", 0.0, 0.5),
+               ("B", 0.5, 1.0)]
+        hyp = [("B", 0.0, 0.25),
+               ("C", 0.25, 0.5),
+               ("D", 0.5, 0.75),
+               ("E", 0.75, 1.0)]
+        self.assertEqual(0.5, der.DER(ref, hyp))
+
+    def test_three_tuples(self):
+        ref = [("A", 0.0, 1.0),
+               ("B", 1.0, 1.5),
+               ("A", 1.6, 2.1)]
+        hyp = [("1", 0.0, 0.8),
+               ("2", 0.8, 1.4),
+               ("3", 1.5, 1.8),
+               ("1", 1.8, 2.0)]
+        self.assertAlmostEqual(0.35, der.DER(ref, hyp), delta=0.0001)
+
+
 if __name__ == "__main__":
     unittest.main()
