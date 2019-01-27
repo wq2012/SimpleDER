@@ -36,7 +36,7 @@ python3 -m pip install simpleder
 Here is a minimal example:
 
 ```python
-import der
+import simpleder
 
 # reference (ground truth)
 ref = [("A", 0.0, 1.0),
@@ -49,7 +49,7 @@ hyp = [("1", 0.0, 0.8),
        ("3", 1.5, 1.8),
        ("1", 1.8, 2.0)]
 
-error = der.DER(ref, hyp)
+error = simpleder.DER(ref, hyp)
 
 print("DER={:.3f}".format(error))
 ```
