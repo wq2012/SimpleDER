@@ -2,6 +2,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import numpy as np
 from scipy import optimize
 
 
@@ -69,6 +70,21 @@ def compute_total_length(hyp):
     return total_length
 
 
+def compute_merged_total_length(ref, hyp):
+    """Compute the total length of the union of reference and hypothesis.
+
+    Args:
+        ref: a list of tuples for the ground truth, where each tuple is
+            (speaker, start, end) of type (string, float, float)
+        hyp: a list of tuples for the diarization result hypothesis, same type
+            as `ref`
+
+    Returns:
+        a float number for the union total length
+    """
+    pass
+
+
 def build_speaker_index(hyp):
     """Build the index for the speakers.
 
@@ -82,6 +98,31 @@ def build_speaker_index(hyp):
     speaker_set = {element[0] for element in hyp}
     index = {speaker: i for i, speaker in enumerate(speaker_set)}
     return index
+
+
+def build_cost_matrix(ref, hyp):
+    """Build the cost matrix.
+
+    Args:
+        ref: a list of tuples for the ground truth, where each tuple is
+            (speaker, start, end) of type (string, float, float)
+        hyp: a list of tuples for the diarization result hypothesis, same type
+            as `ref`
+
+    Returns:
+        a 2-dim numpy array, whose element (i, j) is the overlap between
+            `i`th reference speaker and `j`th hypothesis speaker
+    """
+    ref_index = build_speaker_index(ref)
+    hyp_index = build_speaker_index(hyp)
+    cost_matrix = np.zeros(len(ref_index), len(hyp_index))
+    for ref_element in ref:
+        for hyp_element in hyp:
+            i = ref_index[ref_element[0]]
+            j = hyp_index[hyp_element[0]]
+            cost_matrix[i, j] += compute_intersection_length(
+                ref_element, hyp_element)
+    return cost_matrix
 
 
 def DER(ref, hyp):
@@ -98,3 +139,10 @@ def DER(ref, hyp):
     """
     check_input(ref)
     check_input(hyp)
+    ref_total_length = compute_total_length(ref)
+    cost_matrix = build_cost_matrix(ref, hyp)
+    row_index, col_index = optimize.linear_sum_assignment(-count_matrix)
+    optimal_match_overlap = count_matrix[row_index, col_index].sum()
+    union_total_length = compute_merged_total_length(ref, hyp)
+    der = (union_total_length - optimal_match_overlap) / ref_total_length
+    return der
