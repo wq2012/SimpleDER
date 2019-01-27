@@ -8,6 +8,23 @@ import unittest
 from simpleder import der
 
 
+class TestCheckInput(unittest.TestCase):
+    """Tests for the check_input function."""
+
+    def test_valid(self):
+        ref = [("A", 1.0, 2.0),
+               ("B", 4.0, 5.0),
+               ("A", 6.7, 9.0),
+               ("C", 10.0, 12.0),
+               ("D", 12.0, 13.0)]
+        hyp = [("A", 1.0, 3.0),
+               ("B", 4.0, 4.8),
+               ("A", 7.0, 9.0),
+               ("C", 10.0, 13.0)]
+        der.check_input(ref)
+        der.check_input(hyp)
+
+
 class TestComputeIntersectionLength(unittest.TestCase):
     """Tests for the compute_intersection_length function."""
 

@@ -6,20 +6,6 @@ import numpy as np
 from scipy import optimize
 
 
-def compute_intersection_length(A, B):
-    """Compute the intersection length of two tuples.
-    Args:
-        A: a (speaker, start, end) tuple of type (string, float, float)
-        B: a (speaker, start, end) tuple of type (string, float, float)
-
-    Returns:
-        a float number of the intersection between `A` and `B`
-    """
-    max_start = max(A[1], B[1])
-    min_end = min(A[2], B[2])
-    return max(0.0, min_end - max_start)
-
-
 def check_input(hyp):
     """Check whether a hypothesis/reference is valid.
 
@@ -47,12 +33,12 @@ def check_input(hyp):
             raise TypeError("Start and end must be float numbers.")
         if element[1] > element[2]:
             raise ValueError("Start must not be larger than end.")
-        num_elements = len(hyp)
-        for i in range(num_elements - 1):
-            for j in range(i + 1, num_elements):
-                if compute_intersection_length(element[i], element[j]) > 0.0:
-                    raise ValueError(
-                        "Input must not contain overlapped speech.")
+    num_elements = len(hyp)
+    for i in range(num_elements - 1):
+        for j in range(i + 1, num_elements):
+            if compute_intersection_length(hyp[i], hyp[j]) > 0.0:
+                raise ValueError(
+                    "Input must not contain overlapped speech.")
 
 
 def compute_total_length(hyp):
@@ -69,6 +55,20 @@ def compute_total_length(hyp):
     for element in hyp:
         total_length += element[2] - element[1]
     return total_length
+
+
+def compute_intersection_length(A, B):
+    """Compute the intersection length of two tuples.
+    Args:
+        A: a (speaker, start, end) tuple of type (string, float, float)
+        B: a (speaker, start, end) tuple of type (string, float, float)
+
+    Returns:
+        a float number of the intersection between `A` and `B`
+    """
+    max_start = max(A[1], B[1])
+    min_end = min(A[2], B[2])
+    return max(0.0, min_end - max_start)
 
 
 def compute_merged_total_length(ref, hyp):
