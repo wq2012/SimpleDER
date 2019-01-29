@@ -3,3 +3,4 @@
 build/*
 dist/*
 simpleder.egg-info/*
+.coverage
