@@ -59,6 +59,7 @@ def compute_total_length(hyp):
 
 def compute_intersection_length(A, B):
     """Compute the intersection length of two tuples.
+
     Args:
         A: a (speaker, start, end) tuple of type (string, float, float)
         B: a (speaker, start, end) tuple of type (string, float, float)
