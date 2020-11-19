@@ -88,12 +88,16 @@ def compute_merged_total_length(ref, hyp):
     merged = [(element[1], element[2]) for element in (ref + hyp)]
     # Sort by start.
     merged = sorted(merged, key=lambda element: element[0])
-    num_elements = len(merged)
-    for i in reversed(range(num_elements - 1)):
+    i = len(merged) - 2
+    while i >= 0:
         if merged[i][1] >= merged[i + 1][0]:
             max_end = max(merged[i][1], merged[i + 1][1])
             merged[i] = (merged[i][0], max_end)
             del merged[i + 1]
+            if i == len(merged) - 1:
+                i -= 1
+        else:
+            i -= 1
     total_length = 0.0
     for element in merged:
         total_length += element[1] - element[0]

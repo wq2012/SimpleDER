@@ -82,7 +82,7 @@ class TestComputeTotalLength(unittest.TestCase):
 class TestComputeMergedTotalLength(unittest.TestCase):
     """Tests for the compute_merged_total_length function."""
 
-    def test_example(self):
+    def test_example1(self):
         ref = [("A", 1.0, 2.0),
                ("B", 4.0, 5.0),
                ("A", 6.7, 9.0),
@@ -94,6 +94,13 @@ class TestComputeMergedTotalLength(unittest.TestCase):
                ("C", 10.0, 13.0)]
         merged_total_length = der.compute_merged_total_length(ref, hyp)
         self.assertEqual(8.3, merged_total_length)
+
+    def test_example2(self):
+        ref = [("A", 1.0, 2.0)]
+        hyp = [("A", 1.0, 1.6),
+               ("A", 1.7, 2.5)]
+        merged_total_length = der.compute_merged_total_length(ref, hyp)
+        self.assertEqual(1.5, merged_total_length)
 
 
 class TestBuildSpeakerIndex(unittest.TestCase):
