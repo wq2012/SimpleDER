@@ -207,6 +207,32 @@ class TestDER(unittest.TestCase):
                ("1", 1.8, 2.0)]
         self.assertAlmostEqual(0.35, der.DER(ref, hyp), delta=0.0001)
 
+    def test_hyp_has_more_labels(self):
+        ref = [("0", 0.0, 1.0),
+               ("1", 1.0, 2.0),
+               ("1", 2.0, 3.0),
+               ("1", 3.0, 4.0),
+               ("0", 4.0, 5.0)]
+        hyp = [("0", 0.0, 1.0),
+               ("2", 1.0, 2.0),
+               ("2", 2.0, 3.0),
+               ("0", 3.0, 4.0),
+               ("2", 4.0, 5.0)]
+        self.assertAlmostEqual(0.4, der.DER(ref, hyp), delta=0.0001)
+
+    def test_ref_has_more_labels(self):
+        ref = [("0", 0.0, 1.0),
+               ("2", 1.0, 2.0),
+               ("2", 2.0, 3.0),
+               ("0", 3.0, 4.0),
+               ("1", 4.0, 5.0)]
+        hyp = [("0", 0.0, 1.0),
+               ("1", 1.0, 2.0),
+               ("1", 2.0, 3.0),
+               ("1", 3.0, 4.0),
+               ("0", 4.0, 5.0)]
+        self.assertAlmostEqual(0.4, der.DER(ref, hyp), delta=0.0001)
+
 
 if __name__ == "__main__":
     unittest.main()
