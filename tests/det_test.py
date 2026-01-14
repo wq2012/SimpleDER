@@ -36,13 +36,7 @@ class TestCheckInput(unittest.TestCase):
         with self.assertRaises(TypeError):
             der.check_input(hyp)
 
-    def test_overlap(self):
-        hyp = [("A", 1.0, 3.0),
-               ("B", 4.0, 7.1),
-               ("A", 7.0, 9.0),
-               ("C", 10.0, 13.0)]
-        with self.assertRaises(ValueError):
-            der.check_input(hyp)
+
 
 
 class TestComputeIntersectionLength(unittest.TestCase):
@@ -75,28 +69,34 @@ class TestComputeTotalLength(unittest.TestCase):
         self.assertEqual(8.0, der.compute_total_length(hyp))
 
 
-class TestComputeMergedTotalLength(unittest.TestCase):
-    """Tests for the compute_merged_total_length function."""
 
-    def test_example1(self):
-        ref = [("A", 1.0, 2.0),
-               ("B", 4.0, 5.0),
-               ("A", 6.7, 9.0),
-               ("C", 10.0, 12.0),
-               ("D", 12.0, 13.0)]
-        hyp = [("A", 1.0, 3.0),
-               ("B", 4.0, 4.8),
-               ("A", 7.0, 9.0),
-               ("C", 10.0, 13.0)]
-        merged_total_length = der.compute_merged_total_length(ref, hyp)
-        self.assertEqual(8.3, merged_total_length)
 
-    def test_example2(self):
-        ref = [("A", 1.0, 2.0)]
-        hyp = [("A", 1.0, 1.6),
-               ("A", 1.7, 2.5)]
-        merged_total_length = der.compute_merged_total_length(ref, hyp)
-        self.assertEqual(1.5, merged_total_length)
+class TestComputeLoadLength(unittest.TestCase):
+    """Tests for the compute_load_length function."""
+
+    def test_example(self):
+        ref = [("A", 0.0, 1.0),
+               ("B", 1.0, 2.0)]
+        hyp = [("A", 0.0, 1.0),
+               ("B", 1.0, 2.0)]
+        # Load length should be 2.0
+        self.assertEqual(2.0, der.compute_load_length(ref, hyp))
+
+    def test_overlap(self):
+        ref = [("A", 0.0, 1.0),
+               ("B", 0.0, 1.0)]
+        hyp = [("A", 0.0, 1.0),
+               ("B", 0.0, 1.0)]
+        # Two speakers active from 0 to 1. Max active is 2.
+        # Length is 1 * 2 = 2.0
+        self.assertEqual(2.0, der.compute_load_length(ref, hyp))
+
+    def test_overlap_miss(self):
+        ref = [("A", 0.0, 1.0),
+               ("B", 0.0, 1.0)]
+        hyp = [("A", 0.0, 1.0)]
+        # Ref has 2 speakers, Hyp has 1. Max is 2.
+        self.assertEqual(2.0, der.compute_load_length(ref, hyp))
 
 
 class TestBuildSpeakerIndex(unittest.TestCase):
@@ -232,6 +232,71 @@ class TestDER(unittest.TestCase):
                ("1", 3.0, 4.0),
                ("0", 4.0, 5.0)]
         self.assertAlmostEqual(0.4, der.DER(ref, hyp), delta=0.0001)
+
+    def test_overlap_perfect(self):
+        ref = [("A", 0.0, 1.0),
+               ("B", 0.0, 1.0)]
+        hyp = [("1", 0.0, 1.0),
+               ("2", 0.0, 1.0)]
+        # Perfect match. DER = 0.
+        self.assertEqual(0.0, der.DER(ref, hyp))
+
+    def test_overlap_miss(self):
+        ref = [("A", 0.0, 1.0),
+               ("B", 0.0, 1.0)]
+        hyp = [("1", 0.0, 1.0)]
+        # Load length is 2.0.
+        # Match is 1.0 (one speaker matched).
+        # Ref total length is 2.0.
+        # DER = (2.0 - 1.0) / 2.0 = 0.5
+        self.assertEqual(0.5, der.DER(ref, hyp))
+
+    def test_overlap_fa(self):
+        ref = [("A", 0.0, 1.0)]
+        hyp = [("1", 0.0, 1.0),
+               ("2", 0.0, 1.0)]
+        # Load length is 2.0 (Hyp has 2 speakers).
+        # Match is 1.0.
+        # Ref total length is 1.0.
+        # DER = (2.0 - 1.0) / 1.0 = 1.0
+        self.assertEqual(1.0, der.DER(ref, hyp))
+
+    def test_overlap_confusion(self):
+        # Case where optimal mapping cannot match everyone
+        ref = [("A", 0.0, 1.0)]
+        hyp = [("B", 0.0, 1.0)]
+        # If A can map to B, DER is 0.
+        # But if we force mismatch? (hard to force with simple API unless labels differ globally)
+        # Here they just match A->B. DER=0.
+        self.assertEqual(0.0, der.DER(ref, hyp))
+
+    def test_overlap_confusion_enforced(self):
+        # Enforce confusion by having A match 1 elsewhere better
+        # Ref: A(0-10), A(20-21)
+        # Hyp: 1(0-10), 2(20-21)
+        # Mapping A->1 gives match 10.
+        # Then at 20-21: Ref A vs Hyp 2.
+        # Since A->1, A cannot match 2.
+        # So at 20-21: N_ref=1, N_hyp=1. Match=0.
+        # Load=1.
+        # Error = 1.
+        # Segment 0-10: Error = 0.
+        # Total Error = 1.
+        # Ref Total = 11.
+        # DER = 1/11.
+        ref = [("A", 0.0, 10.0), ("A", 20.0, 21.0)]
+        hyp = [("1", 0.0, 10.0), ("2", 20.0, 21.0)]
+        self.assertAlmostEqual(1.0 / 11.0, der.DER(ref, hyp), delta=0.0001)
+
+    def test_many_speakers_overlap(self):
+        # Ref: A, B, C (all 0-1)
+        # Hyp: 1, 2 (all 0-1)
+        # Match: 2 (A->1, B->2). C is Missed.
+        # Load: 3 (max(3, 2)).
+        # DER = (3 - 2) / 3 = 1/3.
+        ref = [("A", 0.0, 1.0), ("B", 0.0, 1.0), ("C", 0.0, 1.0)]
+        hyp = [("1", 0.0, 1.0), ("2", 0.0, 1.0)]
+        self.assertAlmostEqual(1.0 / 3.0, der.DER(ref, hyp), delta=0.0001)
 
 
 if __name__ == "__main__":

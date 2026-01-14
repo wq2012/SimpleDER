@@ -1,15 +1,21 @@
 # SimpleDER ![Python package](https://github.com/wq2012/SimpleDER/workflows/Python%20package/badge.svg) [![PyPI Version](https://img.shields.io/pypi/v/simpleder.svg)](https://pypi.python.org/pypi/simpleder) [![Python Versions](https://img.shields.io/pypi/pyversions/simpleder.svg)](https://pypi.org/project/simpleder) [![Downloads](https://static.pepy.tech/badge/simpleder)](https://pepy.tech/project/simpleder) [![codecov](https://codecov.io/gh/wq2012/SimpleDER/branch/master/graph/badge.svg)](https://codecov.io/gh/wq2012/SimpleDER) [![Documentation](https://img.shields.io/badge/api-documentation-blue.svg)](https://wq2012.github.io/SimpleDER)
 
+## Table of Contents
+
+* [Overview](#overview)
+* [Diarization Error Rate](#diarization-error-rate)
+* [Implementation](#implementation)
+* [Tutorial](#tutorial)
+
 ## Overview
 
 This is a lightweight library to compute Diarization Error Rate (DER).
 
 Features **NOT** supported:
 
-* Handling overlapped speech, *i.e.* two speakers speaking at the same time.
 * Allowing segment boundary tolerance, *a.k.a.* the `collar` value.
 
-For more sophisticated metrics with these supports, please use
+For more sophisticated metrics with this support, please use
 [pyannote-metrics](https://github.com/pyannote/pyannote-metrics) instead.
 
 To learn more about speaker diarization, here is a curated list of resources:
@@ -37,7 +43,6 @@ The definition of each term:
   reference, but not in hypothesis.
 * `Overlap`: Length of segments which are considered as overlapped speech
   in hypothesis, but not in reference.
-  **This library does NOT support overlap.**
 * `Confusion`: Length of segments which are assigned to different speakers
   in hypothesis and reference (after applying an optimal assignment).
 
@@ -49,6 +54,25 @@ References:
 
 * [pyannote-metrics documentation](https://pyannote.github.io/pyannote-metrics/reference.html)
 * [Xavier Anguera's thesis](http://www.xavieranguera.com/phdthesis/node108.html)
+
+## Implementation
+
+This library allows efficient computation of DER including support for overlapped speech.
+
+The algorithm works as follows:
+
+1.  **Optimal Mapping**: We first align the speakers in the hypothesis to the reference by maximizing the total overlap duration between them. This is a linear sum assignment problem (also known as the weighted bipartite matching problem), which we solve using the Hungarian algorithm (via `scipy.optimize.linear_sum_assignment`). Let `Match` be the total overlap duration of this optimal mapping.
+
+2.  **Load Calculation**: We calculate a value called "Load", representing the total duration of speech that *requires* being matched. This accounts for overlapped speech.
+
+    Mathematically:
+    `Load` = $\int \max(N_{\text{ref}}(t), N_{\text{hyp}}(t)) dt$
+    where $N_{\text{ref}}(t)$ and $N_{\text{hyp}}(t)$ are the number of active speakers at time $t$ in reference and hypothesis, respectively.
+
+3.  **DER Calculation**:
+    `DER = (Load - Match) / Reference Length`
+
+    This formulation is mathematically equivalent to the standard definition `(Miss + False Alarm + Confusion) / Reference Length`.
 
 ## Tutorial
 

@@ -30,11 +30,7 @@ def check_input(hyp):
         if element[1] > element[2]:
             raise ValueError("Start must not be larger than end.")
     num_elements = len(hyp)
-    for i in range(num_elements - 1):
-        for j in range(i + 1, num_elements):
-            if compute_intersection_length(hyp[i], hyp[j]) > 0.0:
-                raise ValueError(
-                    "Input must not contain overlapped speech.")
+
 
 
 def compute_total_length(hyp):
@@ -68,8 +64,20 @@ def compute_intersection_length(A, B):
     return max(0.0, min_end - max_start)
 
 
-def compute_merged_total_length(ref, hyp):
-    """Compute the total length of the union of reference and hypothesis.
+def compute_load_length(ref, hyp):
+    """Compute the load length (integrated maximum number of speakers).
+
+    The "load" is a concept to generalize the union of reference and hypothesis
+    when overlapped speech is present. It is defined as the integral of the
+    maximum number of speakers at any given time point.
+
+    Equation:
+        Load = \int max(N_ref(t), N_hyp(t)) dt
+
+    where N_ref(t) is the number of speakers in reference at time t, and
+    N_hyp(t) is the number of speakers in hypothesis at time t.
+
+    This is equivalent to the "Union" length when there is no overlap (N <= 1).
 
     Args:
         ref: a list of tuples for the ground truth, where each tuple is
@@ -78,26 +86,33 @@ def compute_merged_total_length(ref, hyp):
             as `ref`
 
     Returns:
-        a float number for the union total length
+        a float number for the load length
     """
-    # Remove speaker label and merge.
-    merged = [(element[1], element[2]) for element in (ref + hyp)]
-    # Sort by start.
-    merged = sorted(merged, key=lambda element: element[0])
-    i = len(merged) - 2
-    while i >= 0:
-        if merged[i][1] >= merged[i + 1][0]:
-            max_end = max(merged[i][1], merged[i + 1][1])
-            merged[i] = (merged[i][0], max_end)
-            del merged[i + 1]
-            if i == len(merged) - 1:
-                i -= 1
-        else:
-            i -= 1
-    total_length = 0.0
-    for element in merged:
-        total_length += element[1] - element[0]
-    return total_length
+    boundaries = set()
+    for element in ref + hyp:
+        boundaries.add(element[1])
+        boundaries.add(element[2])
+    boundaries = sorted(list(boundaries))
+
+    load_length = 0.0
+    for i in range(len(boundaries) - 1):
+        start = boundaries[i]
+        end = boundaries[i + 1]
+        mid = (start + end) / 2.0
+
+        ref_count = 0
+        for element in ref:
+            if element[1] <= mid <= element[2]:
+                ref_count += 1
+
+        hyp_count = 0
+        for element in hyp:
+            if element[1] <= mid <= element[2]:
+                hyp_count += 1
+
+        load_length += (end - start) * max(ref_count, hyp_count)
+
+    return load_length
 
 
 def build_speaker_index(hyp):
@@ -158,6 +173,6 @@ def DER(ref, hyp):
     cost_matrix = build_cost_matrix(ref, hyp)
     row_index, col_index = optimize.linear_sum_assignment(-cost_matrix)
     optimal_match_overlap = cost_matrix[row_index, col_index].sum()
-    union_total_length = compute_merged_total_length(ref, hyp)
-    der = (union_total_length - optimal_match_overlap) / ref_total_length
+    load_length = compute_load_length(ref, hyp)
+    der = (load_length - optimal_match_overlap) / ref_total_length
     return der
