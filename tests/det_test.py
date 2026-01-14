@@ -37,8 +37,6 @@ class TestCheckInput(unittest.TestCase):
             der.check_input(hyp)
 
 
-
-
 class TestComputeIntersectionLength(unittest.TestCase):
     """Tests for the compute_intersection_length function."""
 
@@ -67,8 +65,6 @@ class TestComputeTotalLength(unittest.TestCase):
                ("A", 7.0, 9.0),
                ("C", 10.0, 13.0)]
         self.assertEqual(8.0, der.compute_total_length(hyp))
-
-
 
 
 class TestComputeLoadLength(unittest.TestCase):
@@ -266,8 +262,6 @@ class TestDER(unittest.TestCase):
         ref = [("A", 0.0, 1.0)]
         hyp = [("B", 0.0, 1.0)]
         # If A can map to B, DER is 0.
-        # But if we force mismatch? (hard to force with simple API unless labels differ globally)
-        # Here they just match A->B. DER=0.
         self.assertEqual(0.0, der.DER(ref, hyp))
 
     def test_overlap_confusion_enforced(self):

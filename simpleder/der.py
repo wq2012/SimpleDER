@@ -29,8 +29,6 @@ def check_input(hyp):
             raise TypeError("Start and end must be float numbers.")
         if element[1] > element[2]:
             raise ValueError("Start must not be larger than end.")
-    num_elements = len(hyp)
-
 
 
 def compute_total_length(hyp):
@@ -72,7 +70,7 @@ def compute_load_length(ref, hyp):
     maximum number of speakers at any given time point.
 
     Equation:
-        Load = \int max(N_ref(t), N_hyp(t)) dt
+        Load = \\int max(N_ref(t), N_hyp(t)) dt
 
     where N_ref(t) is the number of speakers in reference at time t, and
     N_hyp(t) is the number of speakers in hypothesis at time t.
