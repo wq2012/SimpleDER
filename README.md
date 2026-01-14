@@ -14,6 +14,7 @@ This is a lightweight library to compute Diarization Error Rate (DER).
 Features **NOT** supported:
 
 * Allowing segment boundary tolerance, *a.k.a.* the `collar` value.
+* A full breakdown of the different components of DER (False Alarm, Miss, Overlap, Confusion).
 
 For more sophisticated metrics with this support, please use
 [pyannote-metrics](https://github.com/pyannote/pyannote-metrics) instead.
