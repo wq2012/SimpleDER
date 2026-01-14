@@ -6,14 +6,14 @@
 * [Diarization Error Rate](#diarization-error-rate)
 * [Implementation](#implementation)
 * [Tutorial](#tutorial)
+* [Citation](#citation)
 
 ## Overview
 
-This is a lightweight library to compute Diarization Error Rate (DER).
+This is a single-file lightweight library to compute Diarization Error Rate (DER).
 
-Features **NOT** supported:
+Features **NOT** supported in this library:
 
-* Allowing segment boundary tolerance, *a.k.a.* the `collar` value.
 * A full breakdown of the different components of DER (False Alarm, Miss, Overlap, Confusion).
 
 For more sophisticated metrics with this support, please use
@@ -62,15 +62,17 @@ This library allows efficient computation of DER including support for overlappe
 
 The algorithm works as follows:
 
-1.  **Optimal Mapping**: We first align the speakers in the hypothesis to the reference by maximizing the total overlap duration between them. This is a linear sum assignment problem (also known as the weighted bipartite matching problem), which we solve using the Hungarian algorithm (via `scipy.optimize.linear_sum_assignment`). Let `Match` be the total overlap duration of this optimal mapping.
+1.  **Collar Pre-processing** (if `collar > 0`): We remove regions around reference boundaries from both the reference and the hypothesis. For every start/end time $t$ in the reference, the interval $[t - \text{collar}, t + \text{collar}]$ is excluded from scoring.
 
-2.  **Load Calculation**: We calculate a value called "Load", representing the total duration of speech that *requires* being matched. This accounts for overlapped speech.
+2.  **Optimal Mapping**: We first align the speakers in the hypothesis to the reference by maximizing the total overlap duration between them. This is a linear sum assignment problem (also known as the weighted bipartite matching problem), which we solve using the Hungarian algorithm (via `scipy.optimize.linear_sum_assignment`). Let `Match` be the total overlap duration of this optimal mapping.
+
+3.  **Load Calculation**: We calculate a value called "Load", representing the total duration of speech that *requires* being matched. This accounts for overlapped speech.
 
     Mathematically:
     `Load` = $\int \max(N_{\text{ref}}(t), N_{\text{hyp}}(t)) dt$
     where $N_{\text{ref}}(t)$ and $N_{\text{hyp}}(t)$ are the number of active speakers at time $t$ in reference and hypothesis, respectively.
 
-3.  **DER Calculation**:
+4.  **DER Calculation**:
     `DER = (Load - Match) / Reference Length`
 
     This formulation is mathematically equivalent to the standard definition `(Miss + False Alarm + Confusion) / Reference Length`.
@@ -118,4 +120,36 @@ This should output:
 
 ```
 DER=0.350
+```
+
+## Citation
+
+We developed this package as part of the following work:
+
+```
+@inproceedings{wang2018speaker,
+  title={{Speaker Diarization with LSTM}},
+  author={Wang, Quan and Downey, Carlton and Wan, Li and Mansfield, Philip Andrew and Moreno, Ignacio Lopz},
+  booktitle={2018 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)},
+  pages={5239--5243},
+  year={2018},
+  organization={IEEE}
+}
+
+@inproceedings{xia2022turn,
+  title={{Turn-to-Diarize: Online Speaker Diarization Constrained by Transformer Transducer Speaker Turn Detection}},
+  author={Wei Xia and Han Lu and Quan Wang and Anshuman Tripathi and Yiling Huang and Ignacio Lopez Moreno and Hasim Sak},
+  booktitle={2022 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)},
+  pages={8077--8081},
+  year={2022},
+  organization={IEEE}
+}
+
+@inproceedings{huang24d_interspeech,
+  title={{On the Success and Limitations of Auxiliary Network Based Word-Level End-to-End Neural Speaker Diarization}},
+  author={Yiling Huang and Weiran Wang and Guanlong Zhao and Hank Liao and Wei Xia and Quan Wang},
+  year={2024},
+  booktitle={Interspeech 2024},
+  pages={32--36},
+}
 ```

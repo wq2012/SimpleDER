@@ -292,6 +292,99 @@ class TestDER(unittest.TestCase):
         hyp = [("1", 0.0, 1.0), ("2", 0.0, 1.0)]
         self.assertAlmostEqual(1.0 / 3.0, der.DER(ref, hyp), delta=0.0001)
 
+    def test_collar_simple(self):
+        # Ref: 0.0-1.0. Collar 0.1 -> Exclude [-0.1, 0.1] and [0.9, 1.1]
+        # Valid Ref: 0.1-0.9 (Length 0.8)
+        # Hyp: 0.0-1.0. Valid Hyp: 0.1-0.9 (Length 0.8)
+        # DER = 0.
+        ref = [("A", 0.0, 1.0)]
+        hyp = [("A", 0.0, 1.0)]
+        self.assertEqual(0.0, der.DER(ref, hyp, collar=0.1))
+
+    def test_collar_miss_boundary(self):
+        # Ref: 0.0-1.0. Collar 0.25 -> Exclude [-0.25, 0.25] and [0.75, 1.25].
+        # Valid Ref: 0.25-0.75 (Length 0.5)
+        # Hyp: 0.0-0.8.
+        # Valid Hyp: [0.0, 0.8] - Exclusions
+        # = [0.25, 0.75] intersect [0.0, 0.8] = [0.25, 0.75].
+        # (Hyp also trimmed by 0.75-1.25 exclusion)
+        # Hyp 0.75-0.8 is in exclusion.
+        # So Matches = 0.5. Load = 0.5. DER = 0.
+        ref = [("A", 0.0, 1.0)]
+        hyp = [("A", 0.0, 0.8)]
+        self.assertEqual(0.0, der.DER(ref, hyp, collar=0.25))
+
+    def test_collar_false_alarm_boundary(self):
+        # Ref: 0.0-1.0. Collar 0.1 -> Valid 0.1-0.9.
+        # Hyp: 0.0-1.2.
+        # Valid Hyp: 0.1-0.9 from Ref(0-1), and 1.1-1.2?
+        # Exclusion: [-0.1, 0.1], [0.9, 1.1].
+        # Hyp has 1.1-1.2 left?
+        # WAIT: Exclusion is based on Ref boundaries.
+        # Ref boundaries: 0.0, 1.0.
+        # Hyp part 1.1-1.2 is NOT in exclusion. So it is FA.
+        # Matches: 0.1-0.9 (0.8).
+        # Load: 0.1-0.9 (0.8) + 1.1-1.2 (0.1) = 0.9.
+        # DER = (0.9 - 0.8) / 0.8 = 0.1/0.8 = 0.125
+        ref = [("A", 0.0, 1.0)]
+        hyp = [("A", 0.0, 1.2)]
+        self.assertAlmostEqual(0.125,
+                               der.DER(ref, hyp, collar=0.1),
+                               delta=0.0001)
+
+    def test_collar_adjacent(self):
+        # Ref: A(0-1), B(1-2). Collar 0.1.
+        # Boundaries: 0, 1, 2.
+        # Exclusions: [-0.1, 0.1], [0.9, 1.1], [1.9, 2.1].
+        # Ref Valid: A(0.1-0.9), B(1.1-1.9). Total 1.6.
+        # Hyp: A(0-1.05), B(1.05-2).
+        # Hyp Valid:
+        # A: (0.1-0.9). 0.9-1.05 is excluded (0.9-1.1). So A contributes 0.8.
+        # B: 1.05-2. 1.05-1.1 excluded. 1.1-1.9 valid. 1.9-2 excluded.
+        # B contributes 0.8.
+        # Total Match: 1.6.
+        # DER = 0.
+        ref = [("A", 0.0, 1.0), ("B", 1.0, 2.0)]
+        hyp = [("A", 0.0, 1.05), ("B", 1.05, 2.0)]
+        self.assertEqual(0.0, der.DER(ref, hyp, collar=0.1))
+
+
+class TestComputeMergedExclusionIntervals(unittest.TestCase):
+    def test_basic(self):
+        ref = [("A", 10.0, 20.0)]
+        collar = 1.0
+        # 10->[9,11], 20->[19,21]
+        expected = [(9.0, 11.0), (19.0, 21.0)]
+        self.assertEqual(expected,
+                         der.compute_merged_exclusion_intervals(ref, collar))
+
+    def test_merge(self):
+        ref = [("A", 10.0, 12.0)]
+        collar = 1.5
+        # 10->[8.5, 11.5], 12->[10.5, 13.5]
+        # Overlap: 10.5 < 11.5. Merge to [8.5, 13.5]
+        expected = [(8.5, 13.5)]
+        self.assertEqual(expected,
+                         der.compute_merged_exclusion_intervals(ref, collar))
+
+
+class TestSubtractIntervals(unittest.TestCase):
+    def test_basic(self):
+        segments = [("A", 0.0, 10.0)]
+        exclusions = [(0.0, 1.0), (9.0, 10.0)]
+        # Should result in (1.0, 9.0)
+        expected = [("A", 1.0, 9.0)]
+        self.assertEqual(expected,
+                         der.subtract_intervals(segments, exclusions))
+
+    def test_split(self):
+        segments = [("A", 0.0, 10.0)]
+        exclusions = [(4.0, 6.0)]
+        # Should result in (0.0, 4.0), (6.0, 10.0)
+        expected = [("A", 0.0, 4.0), ("A", 6.0, 10.0)]
+        self.assertEqual(expected,
+                         der.subtract_intervals(segments, exclusions))
+
 
 if __name__ == "__main__":
     unittest.main()

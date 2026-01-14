@@ -65,33 +65,42 @@ simpleder    </h1>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">DER</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">ref</span>, </span><span class="param"><span class="n">hyp</span></span><span class="return-annotation">):</span></span>
+        <span class="name">DER</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">ref</span>, </span><span class="param"><span class="n">hyp</span>, </span><span class="param"><span class="n">collar</span><span class="o">=</span><span class="mf">0.0</span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="DER-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#DER"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DER-159"><a href="#DER-159"><span class="linenos">159</span></a><span class="k">def</span> <span class="nf">DER</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">):</span>
-</span><span id="DER-160"><a href="#DER-160"><span class="linenos">160</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute Diarization Error Rate.</span>
-</span><span id="DER-161"><a href="#DER-161"><span class="linenos">161</span></a>
-</span><span id="DER-162"><a href="#DER-162"><span class="linenos">162</span></a><span class="sd">    Args:</span>
-</span><span id="DER-163"><a href="#DER-163"><span class="linenos">163</span></a><span class="sd">        ref: a list of tuples for the ground truth, where each tuple is</span>
-</span><span id="DER-164"><a href="#DER-164"><span class="linenos">164</span></a><span class="sd">            (speaker, start, end) of type (string, float, float)</span>
-</span><span id="DER-165"><a href="#DER-165"><span class="linenos">165</span></a><span class="sd">        hyp: a list of tuples for the diarization result hypothesis, same type</span>
-</span><span id="DER-166"><a href="#DER-166"><span class="linenos">166</span></a><span class="sd">            as `ref`</span>
-</span><span id="DER-167"><a href="#DER-167"><span class="linenos">167</span></a>
-</span><span id="DER-168"><a href="#DER-168"><span class="linenos">168</span></a><span class="sd">    Returns:</span>
-</span><span id="DER-169"><a href="#DER-169"><span class="linenos">169</span></a><span class="sd">        a float number for the Diarization Error Rate</span>
-</span><span id="DER-170"><a href="#DER-170"><span class="linenos">170</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="DER-171"><a href="#DER-171"><span class="linenos">171</span></a>    <span class="n">check_input</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
-</span><span id="DER-172"><a href="#DER-172"><span class="linenos">172</span></a>    <span class="n">check_input</span><span class="p">(</span><span class="n">hyp</span><span class="p">)</span>
-</span><span id="DER-173"><a href="#DER-173"><span class="linenos">173</span></a>    <span class="n">ref_total_length</span> <span class="o">=</span> <span class="n">compute_total_length</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
-</span><span id="DER-174"><a href="#DER-174"><span class="linenos">174</span></a>    <span class="n">cost_matrix</span> <span class="o">=</span> <span class="n">build_cost_matrix</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">)</span>
-</span><span id="DER-175"><a href="#DER-175"><span class="linenos">175</span></a>    <span class="n">row_index</span><span class="p">,</span> <span class="n">col_index</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">linear_sum_assignment</span><span class="p">(</span><span class="o">-</span><span class="n">cost_matrix</span><span class="p">)</span>
-</span><span id="DER-176"><a href="#DER-176"><span class="linenos">176</span></a>    <span class="n">optimal_match_overlap</span> <span class="o">=</span> <span class="n">cost_matrix</span><span class="p">[</span><span class="n">row_index</span><span class="p">,</span> <span class="n">col_index</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-</span><span id="DER-177"><a href="#DER-177"><span class="linenos">177</span></a>    <span class="n">load_length</span> <span class="o">=</span> <span class="n">compute_load_length</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">)</span>
-</span><span id="DER-178"><a href="#DER-178"><span class="linenos">178</span></a>    <span class="n">der</span> <span class="o">=</span> <span class="p">(</span><span class="n">load_length</span> <span class="o">-</span> <span class="n">optimal_match_overlap</span><span class="p">)</span> <span class="o">/</span> <span class="n">ref_total_length</span>
-</span><span id="DER-179"><a href="#DER-179"><span class="linenos">179</span></a>    <span class="k">return</span> <span class="n">der</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DER-236"><a href="#DER-236"><span class="linenos">236</span></a><span class="k">def</span> <span class="nf">DER</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">,</span> <span class="n">collar</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+</span><span id="DER-237"><a href="#DER-237"><span class="linenos">237</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute Diarization Error Rate.</span>
+</span><span id="DER-238"><a href="#DER-238"><span class="linenos">238</span></a>
+</span><span id="DER-239"><a href="#DER-239"><span class="linenos">239</span></a><span class="sd">    Args:</span>
+</span><span id="DER-240"><a href="#DER-240"><span class="linenos">240</span></a><span class="sd">        ref: a list of tuples for the ground truth, where each tuple is</span>
+</span><span id="DER-241"><a href="#DER-241"><span class="linenos">241</span></a><span class="sd">            (speaker, start, end) of type (string, float, float)</span>
+</span><span id="DER-242"><a href="#DER-242"><span class="linenos">242</span></a><span class="sd">        hyp: a list of tuples for the diarization result hypothesis, same type</span>
+</span><span id="DER-243"><a href="#DER-243"><span class="linenos">243</span></a><span class="sd">            as `ref`</span>
+</span><span id="DER-244"><a href="#DER-244"><span class="linenos">244</span></a><span class="sd">        collar: float, tolerance allowing for some mismatch in speaker borders</span>
+</span><span id="DER-245"><a href="#DER-245"><span class="linenos">245</span></a>
+</span><span id="DER-246"><a href="#DER-246"><span class="linenos">246</span></a><span class="sd">    Returns:</span>
+</span><span id="DER-247"><a href="#DER-247"><span class="linenos">247</span></a><span class="sd">        a float number for the Diarization Error Rate</span>
+</span><span id="DER-248"><a href="#DER-248"><span class="linenos">248</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="DER-249"><a href="#DER-249"><span class="linenos">249</span></a>    <span class="n">check_input</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+</span><span id="DER-250"><a href="#DER-250"><span class="linenos">250</span></a>    <span class="n">check_input</span><span class="p">(</span><span class="n">hyp</span><span class="p">)</span>
+</span><span id="DER-251"><a href="#DER-251"><span class="linenos">251</span></a>
+</span><span id="DER-252"><a href="#DER-252"><span class="linenos">252</span></a>    <span class="k">if</span> <span class="n">collar</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+</span><span id="DER-253"><a href="#DER-253"><span class="linenos">253</span></a>        <span class="n">exclusions</span> <span class="o">=</span> <span class="n">compute_merged_exclusion_intervals</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">collar</span><span class="p">)</span>
+</span><span id="DER-254"><a href="#DER-254"><span class="linenos">254</span></a>        <span class="n">ref</span> <span class="o">=</span> <span class="n">subtract_intervals</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">exclusions</span><span class="p">)</span>
+</span><span id="DER-255"><a href="#DER-255"><span class="linenos">255</span></a>        <span class="n">hyp</span> <span class="o">=</span> <span class="n">subtract_intervals</span><span class="p">(</span><span class="n">hyp</span><span class="p">,</span> <span class="n">exclusions</span><span class="p">)</span>
+</span><span id="DER-256"><a href="#DER-256"><span class="linenos">256</span></a>
+</span><span id="DER-257"><a href="#DER-257"><span class="linenos">257</span></a>    <span class="n">ref_total_length</span> <span class="o">=</span> <span class="n">compute_total_length</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+</span><span id="DER-258"><a href="#DER-258"><span class="linenos">258</span></a>    <span class="n">cost_matrix</span> <span class="o">=</span> <span class="n">build_cost_matrix</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">)</span>
+</span><span id="DER-259"><a href="#DER-259"><span class="linenos">259</span></a>    <span class="n">row_index</span><span class="p">,</span> <span class="n">col_index</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">linear_sum_assignment</span><span class="p">(</span><span class="o">-</span><span class="n">cost_matrix</span><span class="p">)</span>
+</span><span id="DER-260"><a href="#DER-260"><span class="linenos">260</span></a>    <span class="n">optimal_match_overlap</span> <span class="o">=</span> <span class="n">cost_matrix</span><span class="p">[</span><span class="n">row_index</span><span class="p">,</span> <span class="n">col_index</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</span><span id="DER-261"><a href="#DER-261"><span class="linenos">261</span></a>    <span class="n">load_length</span> <span class="o">=</span> <span class="n">compute_load_length</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">)</span>
+</span><span id="DER-262"><a href="#DER-262"><span class="linenos">262</span></a>    <span class="k">if</span> <span class="n">ref_total_length</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+</span><span id="DER-263"><a href="#DER-263"><span class="linenos">263</span></a>        <span class="k">return</span> <span class="mf">0.0</span>
+</span><span id="DER-264"><a href="#DER-264"><span class="linenos">264</span></a>    <span class="n">der</span> <span class="o">=</span> <span class="p">(</span><span class="n">load_length</span> <span class="o">-</span> <span class="n">optimal_match_overlap</span><span class="p">)</span> <span class="o">/</span> <span class="n">ref_total_length</span>
+</span><span id="DER-265"><a href="#DER-265"><span class="linenos">265</span></a>    <span class="k">return</span> <span class="n">der</span>
 </span></pre></div>
 
 
@@ -101,7 +110,8 @@ simpleder    </h1>
     ref: a list of tuples for the ground truth, where each tuple is
         (speaker, start, end) of type (string, float, float)
     hyp: a list of tuples for the diarization result hypothesis, same type
-        as <code>ref</code></p>
+        as <code>ref</code>
+    collar: float, tolerance allowing for some mismatch in speaker borders</p>
 
 <p>Returns:
     a float number for the Diarization Error Rate</p>

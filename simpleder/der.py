@@ -153,7 +153,86 @@ def build_cost_matrix(ref, hyp):
     return cost_matrix
 
 
-def DER(ref, hyp):
+def compute_merged_exclusion_intervals(ref, collar):
+    """Compute merged exclusion intervals based on reference boundaries.
+
+    Args:
+        ref: a list of tuples for the ground truth
+        collar: float, tolerance
+
+    Returns:
+        a list of (start, end) tuples, sorted and merged
+    """
+    if collar == 0.0:
+        return []
+
+    intervals = []
+    for element in ref:
+        start, end = element[1], element[2]
+        intervals.append((start - collar, start + collar))
+        intervals.append((end - collar, end + collar))
+
+    # Sort and merge
+    intervals.sort()
+    merged = []
+    if not intervals:
+        return []
+
+    curr_start, curr_end = intervals[0]
+    for next_start, next_end in intervals[1:]:
+        if next_start <= curr_end:
+            curr_end = max(curr_end, next_end)
+        else:
+            merged.append((curr_start, curr_end))
+            curr_start, curr_end = next_start, next_end
+    merged.append((curr_start, curr_end))
+    return merged
+
+
+def subtract_intervals(segments, exclusions):
+    """Subtract exclusion intervals from segments.
+
+    Args:
+        segments: a list of (speaker, start, end)
+        exclusions: a list of (start, end) tuples, sorted and merged
+
+    Returns:
+        a list of (speaker, start, end) with exclusions removed
+    """
+    if not exclusions:
+        return segments
+
+    new_segments = []
+    for speaker, start, end in segments:
+        # We need to intersect [start, end] with NOT exclusions
+        # Iterate through exclusions and cut [start, end]
+        current_time = start
+        for ex_start, ex_end in exclusions:
+            if ex_end <= current_time:
+                continue
+            if ex_start >= end:
+                break
+
+            # Now we have overlap between
+            # [current_time, end] and [ex_start, ex_end]
+            # The valid part is [current_time, ex_start] (if valid)
+            if ex_start > current_time:
+                new_segments.append((speaker, current_time, ex_start))
+
+            # Advance current_time to after exclusion
+            current_time = max(current_time, ex_end)
+
+            if current_time >= end:
+                break
+
+        # If there is remaining time after all exclusions
+        if current_time < end:
+            new_segments.append((speaker, current_time, end))
+
+    return new_segments
+
+
+def DER(ref, hyp, collar=0.0):
     """Compute Diarization Error Rate.
 
     Args:
@@ -161,16 +240,25 @@ def DER(ref, hyp):
             (speaker, start, end) of type (string, float, float)
         hyp: a list of tuples for the diarization result hypothesis, same type
             as `ref`
+        collar: float, tolerance allowing for some mismatch in speaker borders
 
     Returns:
         a float number for the Diarization Error Rate
     """
     check_input(ref)
     check_input(hyp)
+
+    if collar > 0.0:
+        exclusions = compute_merged_exclusion_intervals(ref, collar)
+        ref = subtract_intervals(ref, exclusions)
+        hyp = subtract_intervals(hyp, exclusions)
+
     ref_total_length = compute_total_length(ref)
     cost_matrix = build_cost_matrix(ref, hyp)
     row_index, col_index = optimize.linear_sum_assignment(-cost_matrix)
     optimal_match_overlap = cost_matrix[row_index, col_index].sum()
     load_length = compute_load_length(ref, hyp)
+    if ref_total_length == 0.0:
+        return 0.0
     der = (load_length - optimal_match_overlap) / ref_total_length
     return der
