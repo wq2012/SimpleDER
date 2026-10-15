@@ -5,18 +5,21 @@
 * [Overview](#overview)
 * [Diarization Error Rate](#diarization-error-rate)
 * [Jaccard Error Rate](#jaccard-error-rate)
+* [Word Diarization Error Rate](#word-diarization-error-rate)
 * [Implementation](#implementation)
 * [Tutorial](#tutorial)
 * [Citation](#citation)
 
 ## Overview
 
-This is a single-file lightweight library to compute speaker diarization evaluation metrics:
+This is a lightweight library (depending only on `numpy` and `scipy`) to compute speaker diarization evaluation metrics:
 
 * **Diarization Error Rate (DER)** with full component breakdown (`Miss`, `False Alarm`, `Confusion`) and optimal speaker mapping
 * **Jaccard Error Rate (JER)** with per-speaker breakdown and optimal speaker mapping
+* **Word Diarization Error Rate (WDER)** with word-level alignment breakdown and optimal speaker mapping
 * **Overlapped speech** support, plus optional `collar` tolerance and `skip_overlap` filtering
-* **Corpus-level evaluation** (`corpus_der` and `corpus_jer`) across multiple recordings
+* **Corpus-level evaluation** (`corpus_der`, `corpus_jer`, and `corpus_wder`) across multiple recordings
+* **NIST RTTM I/O & CLI** (`load_rttm`, `dump_rttm`, and `python3 -m simpleder`)
 
 To learn more about speaker diarization, here is a curated list of resources:
 [awesome-diarization](https://github.com/wq2012/awesome-diarization).
@@ -54,13 +57,19 @@ $$\text{JER} = \frac{1}{|S_{\text{ref}}|} \sum_{r \in S_{\text{ref}}} \left(1 - 
 
 Unmapped reference speakers receive a speaker error of `1.0`. Unlike DER, JER is always bounded in `[0.0, 1.0]`.
 
+## Word Diarization Error Rate
+
+Word Diarization Error Rate (WDER), proposed by [Shafey et al. (Interspeech 2019)](https://arxiv.org/pdf/1907.05337) and used in [DiarizationLM](https://github.com/google/speaker-id/tree/master/DiarizationLM), evaluates joint speech recognition and speaker diarization at the word level. After aligning the normalized reference and hypothesis words via Levenshtein edit distance, WDER computes the fraction of aligned words (correct words $C$ plus substituted words $S$) assigned to the wrong speaker under an optimal 1-to-1 speaker mapping:
+
+$$\text{WDER} = \frac{S_{\text{IS}} + C_{\text{IS}}}{S + C}$$
+
 ## Implementation
 
 1. **Per-Speaker Canonicalization**: Overlapping or contiguous segments belonging to the same speaker are merged so each speaker's timeline consists of disjoint intervals.
 2. **Pre-processing (`collar` and `skip_overlap`)**:
    * If `collar > 0`: For every reference boundary $t$, the interval $[t - \text{collar}, t + \text{collar}]$ (NIST `md-eval` convention) is excluded from both reference and hypothesis.
    * If `skip_overlap=True`: Regions where $N_{\text{ref}}(t) > 1$ are excluded from both reference and hypothesis.
-3. **Optimal Mapping**: We solve the linear sum assignment problem via the Hungarian algorithm (`scipy.optimize.linear_sum_assignment`)—maximizing total overlap duration $\text{Match}$ for DER, or total Jaccard similarity for JER.
+3. **Optimal Mapping**: We solve the linear sum assignment problem via the Hungarian algorithm (`scipy.optimize.linear_sum_assignment`)—maximizing total overlap duration $\text{Match}$ for DER, total Jaccard similarity for JER, or aligned word count for WDER.
 4. **Error & Load Calculation**: Let $\text{Load} = \int \max(N_{\text{ref}}(t), N_{\text{hyp}}(t)) \, dt$. Then:
    $$\text{Miss} + \text{False Alarm} + \text{Confusion} = \text{Load} - \text{Match}$$
    $$\text{DER} = \frac{\text{Load} - \text{Match}}{\text{Reference Length}}$$
@@ -97,6 +106,24 @@ print(f"DER={der:.3f}, JER={jer:.3f}")
 # DER=0.350, JER=0.381
 ```
 
+#### Word Diarization Error Rate (WDER)
+
+`WDER` accepts a list of `(speaker, word_or_phrase)` tuples for both `ref` and `hyp`:
+
+```python
+ref_words = [("A", "hello"), ("A", "world"), ("B", "how"), ("B", "are"), ("B", "you")]
+hyp_words = [("1", "hello"), ("2", "world"), ("2", "how"), ("2", "are"), ("2", "you")]
+
+wder = simpleder.WDER(ref_words, hyp_words)
+print(f"WDER={wder:.3f}")
+# WDER=0.200
+
+# Multi-word utterances with punctuation work identically:
+ref_turns = [("A", "Hello, world!"), ("B", "How are you?")]
+hyp_turns = [("1", "hello"), ("2", "world, how are you.")]
+print(simpleder.WDER(ref_turns, hyp_turns, detailed=True))
+```
+
 #### Options: `collar`, `skip_overlap`, and `detailed` Breakdown
 
 ```python
@@ -113,7 +140,7 @@ details = simpleder.DER(ref, hyp, collar=0.0, skip_overlap=False, detailed=True)
 
 #### Corpus-Level Evaluation (Multiple Recordings)
 
-`corpus_der` computes the micro-averaged DER across recordings, and `corpus_jer` averages per-speaker JER across all reference speakers in the corpus (accepting either `dict` or `list` inputs):
+`corpus_der`, `corpus_jer`, and `corpus_wder` evaluate across multiple recordings (accepting either `dict` or `list` inputs):
 
 ```python
 refs = {"rec1": ref, "rec2": [("A", 0.0, 2.0)]}
@@ -121,6 +148,21 @@ hyps = {"rec1": hyp, "rec2": [("1", 0.0, 2.0)]}
 
 total_der = simpleder.corpus_der(refs, hyps)
 total_jer = simpleder.corpus_jer(refs, hyps)
+```
+
+#### RTTM File I/O and Command-Line Interface
+
+```python
+simpleder.dump_rttm(refs, "ref.rttm")
+simpleder.dump_rttm(hyps, "hyp.rttm")
+
+loaded_refs = simpleder.load_rttm("ref.rttm")
+```
+
+From the terminal:
+
+```bash
+python3 -m simpleder --ref ref.rttm --hyp hyp.rttm --collar 0.25 --detailed
 ```
 
 ## Citation

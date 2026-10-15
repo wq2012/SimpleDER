@@ -36,10 +36,22 @@
                     <a class="function" href="#JER">JER</a>
             </li>
             <li>
+                    <a class="function" href="#WDER">WDER</a>
+            </li>
+            <li>
                     <a class="function" href="#corpus_der">corpus_der</a>
             </li>
             <li>
                     <a class="function" href="#corpus_jer">corpus_jer</a>
+            </li>
+            <li>
+                    <a class="function" href="#corpus_wder">corpus_wder</a>
+            </li>
+            <li>
+                    <a class="function" href="#load_rttm">load_rttm</a>
+            </li>
+            <li>
+                    <a class="function" href="#dump_rttm">dump_rttm</a>
             </li>
     </ul>
 
@@ -62,12 +74,16 @@ simpleder    </h1>
 
                         <label class="view-source-button" for="mod-simpleder-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">1</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">der</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos">2</span></a>
-</span><span id="L-3"><a href="#L-3"><span class="linenos">3</span></a><span class="n">DER</span> <span class="o">=</span> <span class="n">der</span><span class="o">.</span><span class="n">DER</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos">4</span></a><span class="n">JER</span> <span class="o">=</span> <span class="n">der</span><span class="o">.</span><span class="n">JER</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">5</span></a><span class="n">corpus_der</span> <span class="o">=</span> <span class="n">der</span><span class="o">.</span><span class="n">corpus_der</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos">6</span></a><span class="n">corpus_jer</span> <span class="o">=</span> <span class="n">der</span><span class="o">.</span><span class="n">corpus_jer</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">der</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a>
+</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="n">DER</span> <span class="o">=</span> <span class="n">der</span><span class="o">.</span><span class="n">DER</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="n">JER</span> <span class="o">=</span> <span class="n">der</span><span class="o">.</span><span class="n">JER</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="n">WDER</span> <span class="o">=</span> <span class="n">der</span><span class="o">.</span><span class="n">WDER</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="n">corpus_der</span> <span class="o">=</span> <span class="n">der</span><span class="o">.</span><span class="n">corpus_der</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="n">corpus_jer</span> <span class="o">=</span> <span class="n">der</span><span class="o">.</span><span class="n">corpus_jer</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="n">corpus_wder</span> <span class="o">=</span> <span class="n">der</span><span class="o">.</span><span class="n">corpus_wder</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="n">load_rttm</span> <span class="o">=</span> <span class="n">der</span><span class="o">.</span><span class="n">load_rttm</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="n">dump_rttm</span> <span class="o">=</span> <span class="n">der</span><span class="o">.</span><span class="n">dump_rttm</span>
 </span></pre></div>
 
 
@@ -83,71 +99,71 @@ simpleder    </h1>
 
     </div>
     <a class="headerlink" href="#DER"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DER-362"><a href="#DER-362"><span class="linenos">362</span></a><span class="k">def</span><span class="w"> </span><span class="nf">DER</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">,</span> <span class="n">collar</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">skip_overlap</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">detailed</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="DER-363"><a href="#DER-363"><span class="linenos">363</span></a><span class="w">    </span><span class="sd">"""Compute Diarization Error Rate (DER).</span>
-</span><span id="DER-364"><a href="#DER-364"><span class="linenos">364</span></a>
-</span><span id="DER-365"><a href="#DER-365"><span class="linenos">365</span></a><span class="sd">    Args:</span>
-</span><span id="DER-366"><a href="#DER-366"><span class="linenos">366</span></a><span class="sd">        ref: a list of tuples for the ground truth, where each tuple is</span>
-</span><span id="DER-367"><a href="#DER-367"><span class="linenos">367</span></a><span class="sd">            (speaker, start, end) of type (string, float, float)</span>
-</span><span id="DER-368"><a href="#DER-368"><span class="linenos">368</span></a><span class="sd">        hyp: a list of tuples for the diarization result hypothesis, same type</span>
-</span><span id="DER-369"><a href="#DER-369"><span class="linenos">369</span></a><span class="sd">            as `ref`</span>
-</span><span id="DER-370"><a href="#DER-370"><span class="linenos">370</span></a><span class="sd">        collar: float, no-score zone (in seconds) around each reference</span>
-</span><span id="DER-371"><a href="#DER-371"><span class="linenos">371</span></a><span class="sd">            speaker boundary ([boundary - collar, boundary + collar])</span>
-</span><span id="DER-372"><a href="#DER-372"><span class="linenos">372</span></a><span class="sd">        skip_overlap: bool, if True, exclude regions where more than one</span>
-</span><span id="DER-373"><a href="#DER-373"><span class="linenos">373</span></a><span class="sd">            reference speaker is active</span>
-</span><span id="DER-374"><a href="#DER-374"><span class="linenos">374</span></a><span class="sd">        detailed: bool, if True, return a dict containing DER, error component</span>
-</span><span id="DER-375"><a href="#DER-375"><span class="linenos">375</span></a><span class="sd">            durations (miss, false_alarm, confusion, ref_length), and the</span>
-</span><span id="DER-376"><a href="#DER-376"><span class="linenos">376</span></a><span class="sd">            optimal speaker_mapping</span>
-</span><span id="DER-377"><a href="#DER-377"><span class="linenos">377</span></a>
-</span><span id="DER-378"><a href="#DER-378"><span class="linenos">378</span></a><span class="sd">    Returns:</span>
-</span><span id="DER-379"><a href="#DER-379"><span class="linenos">379</span></a><span class="sd">        If `detailed=False`, a float number for the Diarization Error Rate.</span>
-</span><span id="DER-380"><a href="#DER-380"><span class="linenos">380</span></a><span class="sd">        If `detailed=True`, a dict with keys:</span>
-</span><span id="DER-381"><a href="#DER-381"><span class="linenos">381</span></a><span class="sd">            - "der": float, Diarization Error Rate</span>
-</span><span id="DER-382"><a href="#DER-382"><span class="linenos">382</span></a><span class="sd">            - "miss": float, missed speech duration in seconds</span>
-</span><span id="DER-383"><a href="#DER-383"><span class="linenos">383</span></a><span class="sd">            - "false_alarm": float, false alarm duration in seconds</span>
-</span><span id="DER-384"><a href="#DER-384"><span class="linenos">384</span></a><span class="sd">            - "confusion": float, speaker confusion duration in seconds</span>
-</span><span id="DER-385"><a href="#DER-385"><span class="linenos">385</span></a><span class="sd">            - "ref_length": float, scored reference length in seconds</span>
-</span><span id="DER-386"><a href="#DER-386"><span class="linenos">386</span></a><span class="sd">            - "speaker_mapping": dict mapping matched ref -&gt; hyp speaker</span>
-</span><span id="DER-387"><a href="#DER-387"><span class="linenos">387</span></a><span class="sd">    """</span>
-</span><span id="DER-388"><a href="#DER-388"><span class="linenos">388</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">detailed</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-</span><span id="DER-389"><a href="#DER-389"><span class="linenos">389</span></a>        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"detailed must be a boolean."</span><span class="p">)</span>
-</span><span id="DER-390"><a href="#DER-390"><span class="linenos">390</span></a>    <span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span> <span class="o">=</span> <span class="n">_preprocess_segments</span><span class="p">(</span>
-</span><span id="DER-391"><a href="#DER-391"><span class="linenos">391</span></a>        <span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">,</span> <span class="n">collar</span><span class="o">=</span><span class="n">collar</span><span class="p">,</span> <span class="n">skip_overlap</span><span class="o">=</span><span class="n">skip_overlap</span><span class="p">)</span>
-</span><span id="DER-392"><a href="#DER-392"><span class="linenos">392</span></a>
-</span><span id="DER-393"><a href="#DER-393"><span class="linenos">393</span></a>    <span class="n">ref_total_length</span> <span class="o">=</span> <span class="n">compute_total_length</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
-</span><span id="DER-394"><a href="#DER-394"><span class="linenos">394</span></a>    <span class="n">ref_index</span> <span class="o">=</span> <span class="n">build_speaker_index</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
-</span><span id="DER-395"><a href="#DER-395"><span class="linenos">395</span></a>    <span class="n">hyp_index</span> <span class="o">=</span> <span class="n">build_speaker_index</span><span class="p">(</span><span class="n">hyp</span><span class="p">)</span>
-</span><span id="DER-396"><a href="#DER-396"><span class="linenos">396</span></a>    <span class="n">cost_matrix</span> <span class="o">=</span> <span class="n">build_cost_matrix</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">)</span>
-</span><span id="DER-397"><a href="#DER-397"><span class="linenos">397</span></a>    <span class="n">row_index</span><span class="p">,</span> <span class="n">col_index</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">linear_sum_assignment</span><span class="p">(</span><span class="o">-</span><span class="n">cost_matrix</span><span class="p">)</span>
-</span><span id="DER-398"><a href="#DER-398"><span class="linenos">398</span></a>    <span class="n">optimal_match_overlap</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cost_matrix</span><span class="p">[</span><span class="n">row_index</span><span class="p">,</span> <span class="n">col_index</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
-</span><span id="DER-399"><a href="#DER-399"><span class="linenos">399</span></a>
-</span><span id="DER-400"><a href="#DER-400"><span class="linenos">400</span></a>    <span class="n">inv_ref</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">spk</span> <span class="k">for</span> <span class="n">spk</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ref_index</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-</span><span id="DER-401"><a href="#DER-401"><span class="linenos">401</span></a>    <span class="n">inv_hyp</span> <span class="o">=</span> <span class="p">{</span><span class="n">j</span><span class="p">:</span> <span class="n">spk</span> <span class="k">for</span> <span class="n">spk</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">hyp_index</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-</span><span id="DER-402"><a href="#DER-402"><span class="linenos">402</span></a>    <span class="n">speaker_mapping</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="DER-403"><a href="#DER-403"><span class="linenos">403</span></a>        <span class="n">inv_ref</span><span class="p">[</span><span class="n">r</span><span class="p">]:</span> <span class="n">inv_hyp</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
-</span><span id="DER-404"><a href="#DER-404"><span class="linenos">404</span></a>        <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">row_index</span><span class="p">,</span> <span class="n">col_index</span><span class="p">)</span>
-</span><span id="DER-405"><a href="#DER-405"><span class="linenos">405</span></a>        <span class="k">if</span> <span class="n">cost_matrix</span><span class="p">[</span><span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
-</span><span id="DER-406"><a href="#DER-406"><span class="linenos">406</span></a>    <span class="p">}</span>
-</span><span id="DER-407"><a href="#DER-407"><span class="linenos">407</span></a>
-</span><span id="DER-408"><a href="#DER-408"><span class="linenos">408</span></a>    <span class="n">miss</span><span class="p">,</span> <span class="n">false_alarm</span><span class="p">,</span> <span class="n">min_overlap</span><span class="p">,</span> <span class="n">load_length</span> <span class="o">=</span> <span class="n">compute_error_components</span><span class="p">(</span>
-</span><span id="DER-409"><a href="#DER-409"><span class="linenos">409</span></a>        <span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">)</span>
-</span><span id="DER-410"><a href="#DER-410"><span class="linenos">410</span></a>    <span class="n">confusion</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">min_overlap</span> <span class="o">-</span> <span class="n">optimal_match_overlap</span><span class="p">)</span>
-</span><span id="DER-411"><a href="#DER-411"><span class="linenos">411</span></a>
-</span><span id="DER-412"><a href="#DER-412"><span class="linenos">412</span></a>    <span class="k">if</span> <span class="n">ref_total_length</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-</span><span id="DER-413"><a href="#DER-413"><span class="linenos">413</span></a>        <span class="n">der_val</span> <span class="o">=</span> <span class="mf">0.0</span>
-</span><span id="DER-414"><a href="#DER-414"><span class="linenos">414</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="DER-415"><a href="#DER-415"><span class="linenos">415</span></a>        <span class="n">der_val</span> <span class="o">=</span> <span class="p">(</span><span class="n">load_length</span> <span class="o">-</span> <span class="n">optimal_match_overlap</span><span class="p">)</span> <span class="o">/</span> <span class="n">ref_total_length</span>
-</span><span id="DER-416"><a href="#DER-416"><span class="linenos">416</span></a>
-</span><span id="DER-417"><a href="#DER-417"><span class="linenos">417</span></a>    <span class="k">if</span> <span class="n">detailed</span><span class="p">:</span>
-</span><span id="DER-418"><a href="#DER-418"><span class="linenos">418</span></a>        <span class="k">return</span> <span class="p">{</span>
-</span><span id="DER-419"><a href="#DER-419"><span class="linenos">419</span></a>            <span class="s2">"der"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">der_val</span><span class="p">),</span>
-</span><span id="DER-420"><a href="#DER-420"><span class="linenos">420</span></a>            <span class="s2">"miss"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">miss</span><span class="p">),</span>
-</span><span id="DER-421"><a href="#DER-421"><span class="linenos">421</span></a>            <span class="s2">"false_alarm"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">false_alarm</span><span class="p">),</span>
-</span><span id="DER-422"><a href="#DER-422"><span class="linenos">422</span></a>            <span class="s2">"confusion"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">confusion</span><span class="p">),</span>
-</span><span id="DER-423"><a href="#DER-423"><span class="linenos">423</span></a>            <span class="s2">"ref_length"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">ref_total_length</span><span class="p">),</span>
-</span><span id="DER-424"><a href="#DER-424"><span class="linenos">424</span></a>            <span class="s2">"speaker_mapping"</span><span class="p">:</span> <span class="n">speaker_mapping</span><span class="p">,</span>
-</span><span id="DER-425"><a href="#DER-425"><span class="linenos">425</span></a>        <span class="p">}</span>
-</span><span id="DER-426"><a href="#DER-426"><span class="linenos">426</span></a>    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">der_val</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DER-372"><a href="#DER-372"><span class="linenos">372</span></a><span class="k">def</span><span class="w"> </span><span class="nf">DER</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">,</span> <span class="n">collar</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">skip_overlap</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">detailed</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="DER-373"><a href="#DER-373"><span class="linenos">373</span></a><span class="w">    </span><span class="sd">"""Compute Diarization Error Rate (DER).</span>
+</span><span id="DER-374"><a href="#DER-374"><span class="linenos">374</span></a>
+</span><span id="DER-375"><a href="#DER-375"><span class="linenos">375</span></a><span class="sd">    Args:</span>
+</span><span id="DER-376"><a href="#DER-376"><span class="linenos">376</span></a><span class="sd">        ref: a list of tuples for the ground truth, where each tuple is</span>
+</span><span id="DER-377"><a href="#DER-377"><span class="linenos">377</span></a><span class="sd">            (speaker, start, end) of type (string, float, float)</span>
+</span><span id="DER-378"><a href="#DER-378"><span class="linenos">378</span></a><span class="sd">        hyp: a list of tuples for the diarization result hypothesis, same type</span>
+</span><span id="DER-379"><a href="#DER-379"><span class="linenos">379</span></a><span class="sd">            as `ref`</span>
+</span><span id="DER-380"><a href="#DER-380"><span class="linenos">380</span></a><span class="sd">        collar: float, no-score zone (in seconds) around each reference</span>
+</span><span id="DER-381"><a href="#DER-381"><span class="linenos">381</span></a><span class="sd">            speaker boundary ([boundary - collar, boundary + collar])</span>
+</span><span id="DER-382"><a href="#DER-382"><span class="linenos">382</span></a><span class="sd">        skip_overlap: bool, if True, exclude regions where more than one</span>
+</span><span id="DER-383"><a href="#DER-383"><span class="linenos">383</span></a><span class="sd">            reference speaker is active</span>
+</span><span id="DER-384"><a href="#DER-384"><span class="linenos">384</span></a><span class="sd">        detailed: bool, if True, return a dict containing DER, error component</span>
+</span><span id="DER-385"><a href="#DER-385"><span class="linenos">385</span></a><span class="sd">            durations (miss, false_alarm, confusion, ref_length), and the</span>
+</span><span id="DER-386"><a href="#DER-386"><span class="linenos">386</span></a><span class="sd">            optimal speaker_mapping</span>
+</span><span id="DER-387"><a href="#DER-387"><span class="linenos">387</span></a>
+</span><span id="DER-388"><a href="#DER-388"><span class="linenos">388</span></a><span class="sd">    Returns:</span>
+</span><span id="DER-389"><a href="#DER-389"><span class="linenos">389</span></a><span class="sd">        If `detailed=False`, a float number for the Diarization Error Rate.</span>
+</span><span id="DER-390"><a href="#DER-390"><span class="linenos">390</span></a><span class="sd">        If `detailed=True`, a dict with keys:</span>
+</span><span id="DER-391"><a href="#DER-391"><span class="linenos">391</span></a><span class="sd">            - "der": float, Diarization Error Rate</span>
+</span><span id="DER-392"><a href="#DER-392"><span class="linenos">392</span></a><span class="sd">            - "miss": float, missed speech duration in seconds</span>
+</span><span id="DER-393"><a href="#DER-393"><span class="linenos">393</span></a><span class="sd">            - "false_alarm": float, false alarm duration in seconds</span>
+</span><span id="DER-394"><a href="#DER-394"><span class="linenos">394</span></a><span class="sd">            - "confusion": float, speaker confusion duration in seconds</span>
+</span><span id="DER-395"><a href="#DER-395"><span class="linenos">395</span></a><span class="sd">            - "ref_length": float, scored reference length in seconds</span>
+</span><span id="DER-396"><a href="#DER-396"><span class="linenos">396</span></a><span class="sd">            - "speaker_mapping": dict mapping matched ref -&gt; hyp speaker</span>
+</span><span id="DER-397"><a href="#DER-397"><span class="linenos">397</span></a><span class="sd">    """</span>
+</span><span id="DER-398"><a href="#DER-398"><span class="linenos">398</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">detailed</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+</span><span id="DER-399"><a href="#DER-399"><span class="linenos">399</span></a>        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"detailed must be a boolean."</span><span class="p">)</span>
+</span><span id="DER-400"><a href="#DER-400"><span class="linenos">400</span></a>    <span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span> <span class="o">=</span> <span class="n">_preprocess_segments</span><span class="p">(</span>
+</span><span id="DER-401"><a href="#DER-401"><span class="linenos">401</span></a>        <span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">,</span> <span class="n">collar</span><span class="o">=</span><span class="n">collar</span><span class="p">,</span> <span class="n">skip_overlap</span><span class="o">=</span><span class="n">skip_overlap</span><span class="p">)</span>
+</span><span id="DER-402"><a href="#DER-402"><span class="linenos">402</span></a>
+</span><span id="DER-403"><a href="#DER-403"><span class="linenos">403</span></a>    <span class="n">ref_total_length</span> <span class="o">=</span> <span class="n">compute_total_length</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+</span><span id="DER-404"><a href="#DER-404"><span class="linenos">404</span></a>    <span class="n">ref_index</span> <span class="o">=</span> <span class="n">build_speaker_index</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+</span><span id="DER-405"><a href="#DER-405"><span class="linenos">405</span></a>    <span class="n">hyp_index</span> <span class="o">=</span> <span class="n">build_speaker_index</span><span class="p">(</span><span class="n">hyp</span><span class="p">)</span>
+</span><span id="DER-406"><a href="#DER-406"><span class="linenos">406</span></a>    <span class="n">cost_matrix</span> <span class="o">=</span> <span class="n">build_cost_matrix</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">)</span>
+</span><span id="DER-407"><a href="#DER-407"><span class="linenos">407</span></a>    <span class="n">row_index</span><span class="p">,</span> <span class="n">col_index</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">linear_sum_assignment</span><span class="p">(</span><span class="o">-</span><span class="n">cost_matrix</span><span class="p">)</span>
+</span><span id="DER-408"><a href="#DER-408"><span class="linenos">408</span></a>    <span class="n">optimal_match_overlap</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cost_matrix</span><span class="p">[</span><span class="n">row_index</span><span class="p">,</span> <span class="n">col_index</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+</span><span id="DER-409"><a href="#DER-409"><span class="linenos">409</span></a>
+</span><span id="DER-410"><a href="#DER-410"><span class="linenos">410</span></a>    <span class="n">inv_ref</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">spk</span> <span class="k">for</span> <span class="n">spk</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ref_index</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+</span><span id="DER-411"><a href="#DER-411"><span class="linenos">411</span></a>    <span class="n">inv_hyp</span> <span class="o">=</span> <span class="p">{</span><span class="n">j</span><span class="p">:</span> <span class="n">spk</span> <span class="k">for</span> <span class="n">spk</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">hyp_index</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+</span><span id="DER-412"><a href="#DER-412"><span class="linenos">412</span></a>    <span class="n">speaker_mapping</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="DER-413"><a href="#DER-413"><span class="linenos">413</span></a>        <span class="n">inv_ref</span><span class="p">[</span><span class="n">r</span><span class="p">]:</span> <span class="n">inv_hyp</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+</span><span id="DER-414"><a href="#DER-414"><span class="linenos">414</span></a>        <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">row_index</span><span class="p">,</span> <span class="n">col_index</span><span class="p">)</span>
+</span><span id="DER-415"><a href="#DER-415"><span class="linenos">415</span></a>        <span class="k">if</span> <span class="n">cost_matrix</span><span class="p">[</span><span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
+</span><span id="DER-416"><a href="#DER-416"><span class="linenos">416</span></a>    <span class="p">}</span>
+</span><span id="DER-417"><a href="#DER-417"><span class="linenos">417</span></a>
+</span><span id="DER-418"><a href="#DER-418"><span class="linenos">418</span></a>    <span class="n">miss</span><span class="p">,</span> <span class="n">false_alarm</span><span class="p">,</span> <span class="n">min_overlap</span><span class="p">,</span> <span class="n">load_length</span> <span class="o">=</span> <span class="n">compute_error_components</span><span class="p">(</span>
+</span><span id="DER-419"><a href="#DER-419"><span class="linenos">419</span></a>        <span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">)</span>
+</span><span id="DER-420"><a href="#DER-420"><span class="linenos">420</span></a>    <span class="n">confusion</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">min_overlap</span> <span class="o">-</span> <span class="n">optimal_match_overlap</span><span class="p">)</span>
+</span><span id="DER-421"><a href="#DER-421"><span class="linenos">421</span></a>
+</span><span id="DER-422"><a href="#DER-422"><span class="linenos">422</span></a>    <span class="k">if</span> <span class="n">ref_total_length</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+</span><span id="DER-423"><a href="#DER-423"><span class="linenos">423</span></a>        <span class="n">der_val</span> <span class="o">=</span> <span class="mf">0.0</span>
+</span><span id="DER-424"><a href="#DER-424"><span class="linenos">424</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="DER-425"><a href="#DER-425"><span class="linenos">425</span></a>        <span class="n">der_val</span> <span class="o">=</span> <span class="p">(</span><span class="n">load_length</span> <span class="o">-</span> <span class="n">optimal_match_overlap</span><span class="p">)</span> <span class="o">/</span> <span class="n">ref_total_length</span>
+</span><span id="DER-426"><a href="#DER-426"><span class="linenos">426</span></a>
+</span><span id="DER-427"><a href="#DER-427"><span class="linenos">427</span></a>    <span class="k">if</span> <span class="n">detailed</span><span class="p">:</span>
+</span><span id="DER-428"><a href="#DER-428"><span class="linenos">428</span></a>        <span class="k">return</span> <span class="p">{</span>
+</span><span id="DER-429"><a href="#DER-429"><span class="linenos">429</span></a>            <span class="s2">"der"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">der_val</span><span class="p">),</span>
+</span><span id="DER-430"><a href="#DER-430"><span class="linenos">430</span></a>            <span class="s2">"miss"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">miss</span><span class="p">),</span>
+</span><span id="DER-431"><a href="#DER-431"><span class="linenos">431</span></a>            <span class="s2">"false_alarm"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">false_alarm</span><span class="p">),</span>
+</span><span id="DER-432"><a href="#DER-432"><span class="linenos">432</span></a>            <span class="s2">"confusion"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">confusion</span><span class="p">),</span>
+</span><span id="DER-433"><a href="#DER-433"><span class="linenos">433</span></a>            <span class="s2">"ref_length"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">ref_total_length</span><span class="p">),</span>
+</span><span id="DER-434"><a href="#DER-434"><span class="linenos">434</span></a>            <span class="s2">"speaker_mapping"</span><span class="p">:</span> <span class="n">speaker_mapping</span><span class="p">,</span>
+</span><span id="DER-435"><a href="#DER-435"><span class="linenos">435</span></a>        <span class="p">}</span>
+</span><span id="DER-436"><a href="#DER-436"><span class="linenos">436</span></a>    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">der_val</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -190,94 +206,94 @@ simpleder    </h1>
 
     </div>
     <a class="headerlink" href="#JER"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="JER-429"><a href="#JER-429"><span class="linenos">429</span></a><span class="k">def</span><span class="w"> </span><span class="nf">JER</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">,</span> <span class="n">collar</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">skip_overlap</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">detailed</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="JER-430"><a href="#JER-430"><span class="linenos">430</span></a><span class="w">    </span><span class="sd">"""Compute Jaccard Error Rate (JER).</span>
-</span><span id="JER-431"><a href="#JER-431"><span class="linenos">431</span></a>
-</span><span id="JER-432"><a href="#JER-432"><span class="linenos">432</span></a><span class="sd">    JER is the average over all reference speakers of (1 - Jaccard similarity)</span>
-</span><span id="JER-433"><a href="#JER-433"><span class="linenos">433</span></a><span class="sd">    under an optimal 1-to-1 mapping between reference and hypothesis speakers:</span>
-</span><span id="JER-434"><a href="#JER-434"><span class="linenos">434</span></a>
-</span><span id="JER-435"><a href="#JER-435"><span class="linenos">435</span></a><span class="sd">        JER_r = 1 - |r \\cap h| / |r \\cup h|</span>
-</span><span id="JER-436"><a href="#JER-436"><span class="linenos">436</span></a><span class="sd">        JER = (1 / |S_ref|) * \\sum_{r \\in S_ref} JER_r</span>
-</span><span id="JER-437"><a href="#JER-437"><span class="linenos">437</span></a>
-</span><span id="JER-438"><a href="#JER-438"><span class="linenos">438</span></a><span class="sd">    Unmapped reference speakers have JER_r = 1.0.</span>
-</span><span id="JER-439"><a href="#JER-439"><span class="linenos">439</span></a>
-</span><span id="JER-440"><a href="#JER-440"><span class="linenos">440</span></a><span class="sd">    Args:</span>
-</span><span id="JER-441"><a href="#JER-441"><span class="linenos">441</span></a><span class="sd">        ref: a list of tuples for the ground truth, where each tuple is</span>
-</span><span id="JER-442"><a href="#JER-442"><span class="linenos">442</span></a><span class="sd">            (speaker, start, end) of type (string, float, float)</span>
-</span><span id="JER-443"><a href="#JER-443"><span class="linenos">443</span></a><span class="sd">        hyp: a list of tuples for the diarization result hypothesis, same type</span>
-</span><span id="JER-444"><a href="#JER-444"><span class="linenos">444</span></a><span class="sd">            as `ref`</span>
-</span><span id="JER-445"><a href="#JER-445"><span class="linenos">445</span></a><span class="sd">        collar: float, no-score zone (in seconds) around each reference</span>
-</span><span id="JER-446"><a href="#JER-446"><span class="linenos">446</span></a><span class="sd">            speaker boundary ([boundary - collar, boundary + collar])</span>
-</span><span id="JER-447"><a href="#JER-447"><span class="linenos">447</span></a><span class="sd">        skip_overlap: bool, if True, exclude regions where more than one</span>
-</span><span id="JER-448"><a href="#JER-448"><span class="linenos">448</span></a><span class="sd">            reference speaker is active</span>
-</span><span id="JER-449"><a href="#JER-449"><span class="linenos">449</span></a><span class="sd">        detailed: bool, if True, return a dict containing overall JER,</span>
-</span><span id="JER-450"><a href="#JER-450"><span class="linenos">450</span></a><span class="sd">            per-reference-speaker JER, and the optimal speaker_mapping</span>
-</span><span id="JER-451"><a href="#JER-451"><span class="linenos">451</span></a>
-</span><span id="JER-452"><a href="#JER-452"><span class="linenos">452</span></a><span class="sd">    Returns:</span>
-</span><span id="JER-453"><a href="#JER-453"><span class="linenos">453</span></a><span class="sd">        If `detailed=False`, a float number for the Jaccard Error Rate.</span>
-</span><span id="JER-454"><a href="#JER-454"><span class="linenos">454</span></a><span class="sd">        If `detailed=True`, a dict with keys:</span>
-</span><span id="JER-455"><a href="#JER-455"><span class="linenos">455</span></a><span class="sd">            - "jer": float, Jaccard Error Rate</span>
-</span><span id="JER-456"><a href="#JER-456"><span class="linenos">456</span></a><span class="sd">            - "speaker_jer": dict mapping each ref speaker -&gt; speaker JER</span>
-</span><span id="JER-457"><a href="#JER-457"><span class="linenos">457</span></a><span class="sd">            - "speaker_mapping": dict mapping matched ref -&gt; hyp speaker</span>
-</span><span id="JER-458"><a href="#JER-458"><span class="linenos">458</span></a><span class="sd">    """</span>
-</span><span id="JER-459"><a href="#JER-459"><span class="linenos">459</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">detailed</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-</span><span id="JER-460"><a href="#JER-460"><span class="linenos">460</span></a>        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"detailed must be a boolean."</span><span class="p">)</span>
-</span><span id="JER-461"><a href="#JER-461"><span class="linenos">461</span></a>    <span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span> <span class="o">=</span> <span class="n">_preprocess_segments</span><span class="p">(</span>
-</span><span id="JER-462"><a href="#JER-462"><span class="linenos">462</span></a>        <span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">,</span> <span class="n">collar</span><span class="o">=</span><span class="n">collar</span><span class="p">,</span> <span class="n">skip_overlap</span><span class="o">=</span><span class="n">skip_overlap</span><span class="p">)</span>
-</span><span id="JER-463"><a href="#JER-463"><span class="linenos">463</span></a>
-</span><span id="JER-464"><a href="#JER-464"><span class="linenos">464</span></a>    <span class="n">ref_index</span> <span class="o">=</span> <span class="n">build_speaker_index</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
-</span><span id="JER-465"><a href="#JER-465"><span class="linenos">465</span></a>    <span class="n">hyp_index</span> <span class="o">=</span> <span class="n">build_speaker_index</span><span class="p">(</span><span class="n">hyp</span><span class="p">)</span>
-</span><span id="JER-466"><a href="#JER-466"><span class="linenos">466</span></a>
-</span><span id="JER-467"><a href="#JER-467"><span class="linenos">467</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">ref_index</span><span class="p">:</span>
-</span><span id="JER-468"><a href="#JER-468"><span class="linenos">468</span></a>        <span class="k">if</span> <span class="n">detailed</span><span class="p">:</span>
-</span><span id="JER-469"><a href="#JER-469"><span class="linenos">469</span></a>            <span class="k">return</span> <span class="p">{</span>
-</span><span id="JER-470"><a href="#JER-470"><span class="linenos">470</span></a>                <span class="s2">"jer"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-</span><span id="JER-471"><a href="#JER-471"><span class="linenos">471</span></a>                <span class="s2">"speaker_jer"</span><span class="p">:</span> <span class="p">{},</span>
-</span><span id="JER-472"><a href="#JER-472"><span class="linenos">472</span></a>                <span class="s2">"speaker_mapping"</span><span class="p">:</span> <span class="p">{},</span>
-</span><span id="JER-473"><a href="#JER-473"><span class="linenos">473</span></a>            <span class="p">}</span>
-</span><span id="JER-474"><a href="#JER-474"><span class="linenos">474</span></a>        <span class="k">return</span> <span class="mf">0.0</span>
-</span><span id="JER-475"><a href="#JER-475"><span class="linenos">475</span></a>
-</span><span id="JER-476"><a href="#JER-476"><span class="linenos">476</span></a>    <span class="n">ref_durations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ref_index</span><span class="p">))</span>
-</span><span id="JER-477"><a href="#JER-477"><span class="linenos">477</span></a>    <span class="k">for</span> <span class="n">spk</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">ref</span><span class="p">:</span>
-</span><span id="JER-478"><a href="#JER-478"><span class="linenos">478</span></a>        <span class="n">ref_durations</span><span class="p">[</span><span class="n">ref_index</span><span class="p">[</span><span class="n">spk</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
-</span><span id="JER-479"><a href="#JER-479"><span class="linenos">479</span></a>
-</span><span id="JER-480"><a href="#JER-480"><span class="linenos">480</span></a>    <span class="n">hyp_durations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hyp_index</span><span class="p">))</span>
-</span><span id="JER-481"><a href="#JER-481"><span class="linenos">481</span></a>    <span class="k">for</span> <span class="n">spk</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">hyp</span><span class="p">:</span>
-</span><span id="JER-482"><a href="#JER-482"><span class="linenos">482</span></a>        <span class="n">hyp_durations</span><span class="p">[</span><span class="n">hyp_index</span><span class="p">[</span><span class="n">spk</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
-</span><span id="JER-483"><a href="#JER-483"><span class="linenos">483</span></a>
-</span><span id="JER-484"><a href="#JER-484"><span class="linenos">484</span></a>    <span class="n">intersection_matrix</span> <span class="o">=</span> <span class="n">build_cost_matrix</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">)</span>
-</span><span id="JER-485"><a href="#JER-485"><span class="linenos">485</span></a>    <span class="n">union_matrix</span> <span class="o">=</span> <span class="p">(</span>
-</span><span id="JER-486"><a href="#JER-486"><span class="linenos">486</span></a>        <span class="n">ref_durations</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="n">hyp_durations</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">intersection_matrix</span>
-</span><span id="JER-487"><a href="#JER-487"><span class="linenos">487</span></a>    <span class="p">)</span>
-</span><span id="JER-488"><a href="#JER-488"><span class="linenos">488</span></a>    <span class="n">jaccard_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span>
-</span><span id="JER-489"><a href="#JER-489"><span class="linenos">489</span></a>        <span class="n">intersection_matrix</span><span class="p">,</span>
-</span><span id="JER-490"><a href="#JER-490"><span class="linenos">490</span></a>        <span class="n">union_matrix</span><span class="p">,</span>
-</span><span id="JER-491"><a href="#JER-491"><span class="linenos">491</span></a>        <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">intersection_matrix</span><span class="p">),</span>
-</span><span id="JER-492"><a href="#JER-492"><span class="linenos">492</span></a>        <span class="n">where</span><span class="o">=</span><span class="n">union_matrix</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span>
-</span><span id="JER-493"><a href="#JER-493"><span class="linenos">493</span></a>    <span class="p">)</span>
-</span><span id="JER-494"><a href="#JER-494"><span class="linenos">494</span></a>
-</span><span id="JER-495"><a href="#JER-495"><span class="linenos">495</span></a>    <span class="n">row_index</span><span class="p">,</span> <span class="n">col_index</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">linear_sum_assignment</span><span class="p">(</span><span class="o">-</span><span class="n">jaccard_matrix</span><span class="p">)</span>
-</span><span id="JER-496"><a href="#JER-496"><span class="linenos">496</span></a>
-</span><span id="JER-497"><a href="#JER-497"><span class="linenos">497</span></a>    <span class="n">inv_ref</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">spk</span> <span class="k">for</span> <span class="n">spk</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ref_index</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-</span><span id="JER-498"><a href="#JER-498"><span class="linenos">498</span></a>    <span class="n">inv_hyp</span> <span class="o">=</span> <span class="p">{</span><span class="n">j</span><span class="p">:</span> <span class="n">spk</span> <span class="k">for</span> <span class="n">spk</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">hyp_index</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-</span><span id="JER-499"><a href="#JER-499"><span class="linenos">499</span></a>    <span class="n">speaker_jer</span> <span class="o">=</span> <span class="p">{</span><span class="n">spk</span><span class="p">:</span> <span class="mf">1.0</span> <span class="k">for</span> <span class="n">spk</span> <span class="ow">in</span> <span class="n">ref_index</span><span class="p">}</span>
-</span><span id="JER-500"><a href="#JER-500"><span class="linenos">500</span></a>    <span class="n">speaker_mapping</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="JER-501"><a href="#JER-501"><span class="linenos">501</span></a>
-</span><span id="JER-502"><a href="#JER-502"><span class="linenos">502</span></a>    <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">row_index</span><span class="p">,</span> <span class="n">col_index</span><span class="p">):</span>
-</span><span id="JER-503"><a href="#JER-503"><span class="linenos">503</span></a>        <span class="n">ref_spk</span> <span class="o">=</span> <span class="n">inv_ref</span><span class="p">[</span><span class="n">r</span><span class="p">]</span>
-</span><span id="JER-504"><a href="#JER-504"><span class="linenos">504</span></a>        <span class="n">speaker_jer</span><span class="p">[</span><span class="n">ref_spk</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">jaccard_matrix</span><span class="p">[</span><span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">])</span>
-</span><span id="JER-505"><a href="#JER-505"><span class="linenos">505</span></a>        <span class="k">if</span> <span class="n">intersection_matrix</span><span class="p">[</span><span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
-</span><span id="JER-506"><a href="#JER-506"><span class="linenos">506</span></a>            <span class="n">speaker_mapping</span><span class="p">[</span><span class="n">ref_spk</span><span class="p">]</span> <span class="o">=</span> <span class="n">inv_hyp</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
-</span><span id="JER-507"><a href="#JER-507"><span class="linenos">507</span></a>
-</span><span id="JER-508"><a href="#JER-508"><span class="linenos">508</span></a>    <span class="n">jer_val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">speaker_jer</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref_index</span><span class="p">))</span>
-</span><span id="JER-509"><a href="#JER-509"><span class="linenos">509</span></a>
-</span><span id="JER-510"><a href="#JER-510"><span class="linenos">510</span></a>    <span class="k">if</span> <span class="n">detailed</span><span class="p">:</span>
-</span><span id="JER-511"><a href="#JER-511"><span class="linenos">511</span></a>        <span class="k">return</span> <span class="p">{</span>
-</span><span id="JER-512"><a href="#JER-512"><span class="linenos">512</span></a>            <span class="s2">"jer"</span><span class="p">:</span> <span class="n">jer_val</span><span class="p">,</span>
-</span><span id="JER-513"><a href="#JER-513"><span class="linenos">513</span></a>            <span class="s2">"speaker_jer"</span><span class="p">:</span> <span class="n">speaker_jer</span><span class="p">,</span>
-</span><span id="JER-514"><a href="#JER-514"><span class="linenos">514</span></a>            <span class="s2">"speaker_mapping"</span><span class="p">:</span> <span class="n">speaker_mapping</span><span class="p">,</span>
-</span><span id="JER-515"><a href="#JER-515"><span class="linenos">515</span></a>        <span class="p">}</span>
-</span><span id="JER-516"><a href="#JER-516"><span class="linenos">516</span></a>    <span class="k">return</span> <span class="n">jer_val</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="JER-439"><a href="#JER-439"><span class="linenos">439</span></a><span class="k">def</span><span class="w"> </span><span class="nf">JER</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">,</span> <span class="n">collar</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">skip_overlap</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">detailed</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="JER-440"><a href="#JER-440"><span class="linenos">440</span></a><span class="w">    </span><span class="sd">"""Compute Jaccard Error Rate (JER).</span>
+</span><span id="JER-441"><a href="#JER-441"><span class="linenos">441</span></a>
+</span><span id="JER-442"><a href="#JER-442"><span class="linenos">442</span></a><span class="sd">    JER is the average over all reference speakers of (1 - Jaccard similarity)</span>
+</span><span id="JER-443"><a href="#JER-443"><span class="linenos">443</span></a><span class="sd">    under an optimal 1-to-1 mapping between reference and hypothesis speakers:</span>
+</span><span id="JER-444"><a href="#JER-444"><span class="linenos">444</span></a>
+</span><span id="JER-445"><a href="#JER-445"><span class="linenos">445</span></a><span class="sd">        JER_r = 1 - |r \\cap h| / |r \\cup h|</span>
+</span><span id="JER-446"><a href="#JER-446"><span class="linenos">446</span></a><span class="sd">        JER = (1 / |S_ref|) * \\sum_{r \\in S_ref} JER_r</span>
+</span><span id="JER-447"><a href="#JER-447"><span class="linenos">447</span></a>
+</span><span id="JER-448"><a href="#JER-448"><span class="linenos">448</span></a><span class="sd">    Unmapped reference speakers have JER_r = 1.0.</span>
+</span><span id="JER-449"><a href="#JER-449"><span class="linenos">449</span></a>
+</span><span id="JER-450"><a href="#JER-450"><span class="linenos">450</span></a><span class="sd">    Args:</span>
+</span><span id="JER-451"><a href="#JER-451"><span class="linenos">451</span></a><span class="sd">        ref: a list of tuples for the ground truth, where each tuple is</span>
+</span><span id="JER-452"><a href="#JER-452"><span class="linenos">452</span></a><span class="sd">            (speaker, start, end) of type (string, float, float)</span>
+</span><span id="JER-453"><a href="#JER-453"><span class="linenos">453</span></a><span class="sd">        hyp: a list of tuples for the diarization result hypothesis, same type</span>
+</span><span id="JER-454"><a href="#JER-454"><span class="linenos">454</span></a><span class="sd">            as `ref`</span>
+</span><span id="JER-455"><a href="#JER-455"><span class="linenos">455</span></a><span class="sd">        collar: float, no-score zone (in seconds) around each reference</span>
+</span><span id="JER-456"><a href="#JER-456"><span class="linenos">456</span></a><span class="sd">            speaker boundary ([boundary - collar, boundary + collar])</span>
+</span><span id="JER-457"><a href="#JER-457"><span class="linenos">457</span></a><span class="sd">        skip_overlap: bool, if True, exclude regions where more than one</span>
+</span><span id="JER-458"><a href="#JER-458"><span class="linenos">458</span></a><span class="sd">            reference speaker is active</span>
+</span><span id="JER-459"><a href="#JER-459"><span class="linenos">459</span></a><span class="sd">        detailed: bool, if True, return a dict containing overall JER,</span>
+</span><span id="JER-460"><a href="#JER-460"><span class="linenos">460</span></a><span class="sd">            per-reference-speaker JER, and the optimal speaker_mapping</span>
+</span><span id="JER-461"><a href="#JER-461"><span class="linenos">461</span></a>
+</span><span id="JER-462"><a href="#JER-462"><span class="linenos">462</span></a><span class="sd">    Returns:</span>
+</span><span id="JER-463"><a href="#JER-463"><span class="linenos">463</span></a><span class="sd">        If `detailed=False`, a float number for the Jaccard Error Rate.</span>
+</span><span id="JER-464"><a href="#JER-464"><span class="linenos">464</span></a><span class="sd">        If `detailed=True`, a dict with keys:</span>
+</span><span id="JER-465"><a href="#JER-465"><span class="linenos">465</span></a><span class="sd">            - "jer": float, Jaccard Error Rate</span>
+</span><span id="JER-466"><a href="#JER-466"><span class="linenos">466</span></a><span class="sd">            - "speaker_jer": dict mapping each ref speaker -&gt; speaker JER</span>
+</span><span id="JER-467"><a href="#JER-467"><span class="linenos">467</span></a><span class="sd">            - "speaker_mapping": dict mapping matched ref -&gt; hyp speaker</span>
+</span><span id="JER-468"><a href="#JER-468"><span class="linenos">468</span></a><span class="sd">    """</span>
+</span><span id="JER-469"><a href="#JER-469"><span class="linenos">469</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">detailed</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+</span><span id="JER-470"><a href="#JER-470"><span class="linenos">470</span></a>        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"detailed must be a boolean."</span><span class="p">)</span>
+</span><span id="JER-471"><a href="#JER-471"><span class="linenos">471</span></a>    <span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span> <span class="o">=</span> <span class="n">_preprocess_segments</span><span class="p">(</span>
+</span><span id="JER-472"><a href="#JER-472"><span class="linenos">472</span></a>        <span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">,</span> <span class="n">collar</span><span class="o">=</span><span class="n">collar</span><span class="p">,</span> <span class="n">skip_overlap</span><span class="o">=</span><span class="n">skip_overlap</span><span class="p">)</span>
+</span><span id="JER-473"><a href="#JER-473"><span class="linenos">473</span></a>
+</span><span id="JER-474"><a href="#JER-474"><span class="linenos">474</span></a>    <span class="n">ref_index</span> <span class="o">=</span> <span class="n">build_speaker_index</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+</span><span id="JER-475"><a href="#JER-475"><span class="linenos">475</span></a>    <span class="n">hyp_index</span> <span class="o">=</span> <span class="n">build_speaker_index</span><span class="p">(</span><span class="n">hyp</span><span class="p">)</span>
+</span><span id="JER-476"><a href="#JER-476"><span class="linenos">476</span></a>
+</span><span id="JER-477"><a href="#JER-477"><span class="linenos">477</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">ref_index</span><span class="p">:</span>
+</span><span id="JER-478"><a href="#JER-478"><span class="linenos">478</span></a>        <span class="k">if</span> <span class="n">detailed</span><span class="p">:</span>
+</span><span id="JER-479"><a href="#JER-479"><span class="linenos">479</span></a>            <span class="k">return</span> <span class="p">{</span>
+</span><span id="JER-480"><a href="#JER-480"><span class="linenos">480</span></a>                <span class="s2">"jer"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+</span><span id="JER-481"><a href="#JER-481"><span class="linenos">481</span></a>                <span class="s2">"speaker_jer"</span><span class="p">:</span> <span class="p">{},</span>
+</span><span id="JER-482"><a href="#JER-482"><span class="linenos">482</span></a>                <span class="s2">"speaker_mapping"</span><span class="p">:</span> <span class="p">{},</span>
+</span><span id="JER-483"><a href="#JER-483"><span class="linenos">483</span></a>            <span class="p">}</span>
+</span><span id="JER-484"><a href="#JER-484"><span class="linenos">484</span></a>        <span class="k">return</span> <span class="mf">0.0</span>
+</span><span id="JER-485"><a href="#JER-485"><span class="linenos">485</span></a>
+</span><span id="JER-486"><a href="#JER-486"><span class="linenos">486</span></a>    <span class="n">ref_durations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ref_index</span><span class="p">))</span>
+</span><span id="JER-487"><a href="#JER-487"><span class="linenos">487</span></a>    <span class="k">for</span> <span class="n">spk</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">ref</span><span class="p">:</span>
+</span><span id="JER-488"><a href="#JER-488"><span class="linenos">488</span></a>        <span class="n">ref_durations</span><span class="p">[</span><span class="n">ref_index</span><span class="p">[</span><span class="n">spk</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+</span><span id="JER-489"><a href="#JER-489"><span class="linenos">489</span></a>
+</span><span id="JER-490"><a href="#JER-490"><span class="linenos">490</span></a>    <span class="n">hyp_durations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hyp_index</span><span class="p">))</span>
+</span><span id="JER-491"><a href="#JER-491"><span class="linenos">491</span></a>    <span class="k">for</span> <span class="n">spk</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">hyp</span><span class="p">:</span>
+</span><span id="JER-492"><a href="#JER-492"><span class="linenos">492</span></a>        <span class="n">hyp_durations</span><span class="p">[</span><span class="n">hyp_index</span><span class="p">[</span><span class="n">spk</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+</span><span id="JER-493"><a href="#JER-493"><span class="linenos">493</span></a>
+</span><span id="JER-494"><a href="#JER-494"><span class="linenos">494</span></a>    <span class="n">intersection_matrix</span> <span class="o">=</span> <span class="n">build_cost_matrix</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">)</span>
+</span><span id="JER-495"><a href="#JER-495"><span class="linenos">495</span></a>    <span class="n">union_matrix</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="JER-496"><a href="#JER-496"><span class="linenos">496</span></a>        <span class="n">ref_durations</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="n">hyp_durations</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">intersection_matrix</span>
+</span><span id="JER-497"><a href="#JER-497"><span class="linenos">497</span></a>    <span class="p">)</span>
+</span><span id="JER-498"><a href="#JER-498"><span class="linenos">498</span></a>    <span class="n">jaccard_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span>
+</span><span id="JER-499"><a href="#JER-499"><span class="linenos">499</span></a>        <span class="n">intersection_matrix</span><span class="p">,</span>
+</span><span id="JER-500"><a href="#JER-500"><span class="linenos">500</span></a>        <span class="n">union_matrix</span><span class="p">,</span>
+</span><span id="JER-501"><a href="#JER-501"><span class="linenos">501</span></a>        <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">intersection_matrix</span><span class="p">),</span>
+</span><span id="JER-502"><a href="#JER-502"><span class="linenos">502</span></a>        <span class="n">where</span><span class="o">=</span><span class="n">union_matrix</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span>
+</span><span id="JER-503"><a href="#JER-503"><span class="linenos">503</span></a>    <span class="p">)</span>
+</span><span id="JER-504"><a href="#JER-504"><span class="linenos">504</span></a>
+</span><span id="JER-505"><a href="#JER-505"><span class="linenos">505</span></a>    <span class="n">row_index</span><span class="p">,</span> <span class="n">col_index</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">linear_sum_assignment</span><span class="p">(</span><span class="o">-</span><span class="n">jaccard_matrix</span><span class="p">)</span>
+</span><span id="JER-506"><a href="#JER-506"><span class="linenos">506</span></a>
+</span><span id="JER-507"><a href="#JER-507"><span class="linenos">507</span></a>    <span class="n">inv_ref</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">spk</span> <span class="k">for</span> <span class="n">spk</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ref_index</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+</span><span id="JER-508"><a href="#JER-508"><span class="linenos">508</span></a>    <span class="n">inv_hyp</span> <span class="o">=</span> <span class="p">{</span><span class="n">j</span><span class="p">:</span> <span class="n">spk</span> <span class="k">for</span> <span class="n">spk</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">hyp_index</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+</span><span id="JER-509"><a href="#JER-509"><span class="linenos">509</span></a>    <span class="n">speaker_jer</span> <span class="o">=</span> <span class="p">{</span><span class="n">spk</span><span class="p">:</span> <span class="mf">1.0</span> <span class="k">for</span> <span class="n">spk</span> <span class="ow">in</span> <span class="n">ref_index</span><span class="p">}</span>
+</span><span id="JER-510"><a href="#JER-510"><span class="linenos">510</span></a>    <span class="n">speaker_mapping</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="JER-511"><a href="#JER-511"><span class="linenos">511</span></a>
+</span><span id="JER-512"><a href="#JER-512"><span class="linenos">512</span></a>    <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">row_index</span><span class="p">,</span> <span class="n">col_index</span><span class="p">):</span>
+</span><span id="JER-513"><a href="#JER-513"><span class="linenos">513</span></a>        <span class="n">ref_spk</span> <span class="o">=</span> <span class="n">inv_ref</span><span class="p">[</span><span class="n">r</span><span class="p">]</span>
+</span><span id="JER-514"><a href="#JER-514"><span class="linenos">514</span></a>        <span class="n">speaker_jer</span><span class="p">[</span><span class="n">ref_spk</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">jaccard_matrix</span><span class="p">[</span><span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">])</span>
+</span><span id="JER-515"><a href="#JER-515"><span class="linenos">515</span></a>        <span class="k">if</span> <span class="n">intersection_matrix</span><span class="p">[</span><span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+</span><span id="JER-516"><a href="#JER-516"><span class="linenos">516</span></a>            <span class="n">speaker_mapping</span><span class="p">[</span><span class="n">ref_spk</span><span class="p">]</span> <span class="o">=</span> <span class="n">inv_hyp</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+</span><span id="JER-517"><a href="#JER-517"><span class="linenos">517</span></a>
+</span><span id="JER-518"><a href="#JER-518"><span class="linenos">518</span></a>    <span class="n">jer_val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">speaker_jer</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref_index</span><span class="p">))</span>
+</span><span id="JER-519"><a href="#JER-519"><span class="linenos">519</span></a>
+</span><span id="JER-520"><a href="#JER-520"><span class="linenos">520</span></a>    <span class="k">if</span> <span class="n">detailed</span><span class="p">:</span>
+</span><span id="JER-521"><a href="#JER-521"><span class="linenos">521</span></a>        <span class="k">return</span> <span class="p">{</span>
+</span><span id="JER-522"><a href="#JER-522"><span class="linenos">522</span></a>            <span class="s2">"jer"</span><span class="p">:</span> <span class="n">jer_val</span><span class="p">,</span>
+</span><span id="JER-523"><a href="#JER-523"><span class="linenos">523</span></a>            <span class="s2">"speaker_jer"</span><span class="p">:</span> <span class="n">speaker_jer</span><span class="p">,</span>
+</span><span id="JER-524"><a href="#JER-524"><span class="linenos">524</span></a>            <span class="s2">"speaker_mapping"</span><span class="p">:</span> <span class="n">speaker_mapping</span><span class="p">,</span>
+</span><span id="JER-525"><a href="#JER-525"><span class="linenos">525</span></a>        <span class="p">}</span>
+</span><span id="JER-526"><a href="#JER-526"><span class="linenos">526</span></a>    <span class="k">return</span> <span class="n">jer_val</span>
 </span></pre></div>
 
 
@@ -314,6 +330,171 @@ JER = (1 / |S_ref|) * \sum_{r \in S_ref} JER_r
 
 
                 </section>
+                <section id="WDER">
+                            <input id="WDER-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">WDER</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">ref</span>, </span><span class="param"><span class="n">hyp</span>, </span><span class="param"><span class="n">detailed</span><span class="o">=</span><span class="kc">False</span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="WDER-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#WDER"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="WDER-652"><a href="#WDER-652"><span class="linenos">652</span></a><span class="k">def</span><span class="w"> </span><span class="nf">WDER</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">,</span> <span class="n">detailed</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="WDER-653"><a href="#WDER-653"><span class="linenos">653</span></a><span class="w">    </span><span class="sd">"""Compute Word Diarization Error Rate (WDER).</span>
+</span><span id="WDER-654"><a href="#WDER-654"><span class="linenos">654</span></a>
+</span><span id="WDER-655"><a href="#WDER-655"><span class="linenos">655</span></a><span class="sd">    WDER measures the fraction of aligned words (correct ASR words plus</span>
+</span><span id="WDER-656"><a href="#WDER-656"><span class="linenos">656</span></a><span class="sd">    substituted ASR words after Levenshtein alignment between reference and</span>
+</span><span id="WDER-657"><a href="#WDER-657"><span class="linenos">657</span></a><span class="sd">    hypothesis transcripts) that are assigned to the wrong speaker after</span>
+</span><span id="WDER-658"><a href="#WDER-658"><span class="linenos">658</span></a><span class="sd">    optimal 1-to-1 speaker mapping (Shafey et al., Interspeech 2019).</span>
+</span><span id="WDER-659"><a href="#WDER-659"><span class="linenos">659</span></a>
+</span><span id="WDER-660"><a href="#WDER-660"><span class="linenos">660</span></a><span class="sd">    Args:</span>
+</span><span id="WDER-661"><a href="#WDER-661"><span class="linenos">661</span></a><span class="sd">        ref: a list of (speaker, word) tuples of type (str, str) for the</span>
+</span><span id="WDER-662"><a href="#WDER-662"><span class="linenos">662</span></a><span class="sd">            ground truth. Each tuple's text may be a single word or</span>
+</span><span id="WDER-663"><a href="#WDER-663"><span class="linenos">663</span></a><span class="sd">            whitespace-separated words spoken by that speaker.</span>
+</span><span id="WDER-664"><a href="#WDER-664"><span class="linenos">664</span></a><span class="sd">        hyp: a list of (speaker, word) tuples of type (str, str) for the</span>
+</span><span id="WDER-665"><a href="#WDER-665"><span class="linenos">665</span></a><span class="sd">            hypothesis, same format as `ref`.</span>
+</span><span id="WDER-666"><a href="#WDER-666"><span class="linenos">666</span></a><span class="sd">        detailed: bool, if True, return a dict containing WDER, word counts</span>
+</span><span id="WDER-667"><a href="#WDER-667"><span class="linenos">667</span></a><span class="sd">            (wder_sub, wder_correct, wder_total), WER breakdown, and the</span>
+</span><span id="WDER-668"><a href="#WDER-668"><span class="linenos">668</span></a><span class="sd">            optimal speaker_mapping.</span>
+</span><span id="WDER-669"><a href="#WDER-669"><span class="linenos">669</span></a>
+</span><span id="WDER-670"><a href="#WDER-670"><span class="linenos">670</span></a><span class="sd">    Returns:</span>
+</span><span id="WDER-671"><a href="#WDER-671"><span class="linenos">671</span></a><span class="sd">        If `detailed=False`, a float number for the Word Diarization Error</span>
+</span><span id="WDER-672"><a href="#WDER-672"><span class="linenos">672</span></a><span class="sd">        Rate.</span>
+</span><span id="WDER-673"><a href="#WDER-673"><span class="linenos">673</span></a><span class="sd">        If `detailed=True`, a dict with keys:</span>
+</span><span id="WDER-674"><a href="#WDER-674"><span class="linenos">674</span></a><span class="sd">            - "wder": float, Word Diarization Error Rate</span>
+</span><span id="WDER-675"><a href="#WDER-675"><span class="linenos">675</span></a><span class="sd">            - "wder_sub": int, aligned words with wrong speaker label</span>
+</span><span id="WDER-676"><a href="#WDER-676"><span class="linenos">676</span></a><span class="sd">            - "wder_correct": int, aligned words with correct speaker label</span>
+</span><span id="WDER-677"><a href="#WDER-677"><span class="linenos">677</span></a><span class="sd">            - "wder_total": int, total aligned words (wer_correct + wer_sub)</span>
+</span><span id="WDER-678"><a href="#WDER-678"><span class="linenos">678</span></a><span class="sd">            - "wer": float, Word Error Rate of the transcript</span>
+</span><span id="WDER-679"><a href="#WDER-679"><span class="linenos">679</span></a><span class="sd">            - "wer_insert": int, inserted words</span>
+</span><span id="WDER-680"><a href="#WDER-680"><span class="linenos">680</span></a><span class="sd">            - "wer_delete": int, deleted words</span>
+</span><span id="WDER-681"><a href="#WDER-681"><span class="linenos">681</span></a><span class="sd">            - "wer_sub": int, substituted words</span>
+</span><span id="WDER-682"><a href="#WDER-682"><span class="linenos">682</span></a><span class="sd">            - "wer_correct": int, correct words</span>
+</span><span id="WDER-683"><a href="#WDER-683"><span class="linenos">683</span></a><span class="sd">            - "wer_total": int, total reference words</span>
+</span><span id="WDER-684"><a href="#WDER-684"><span class="linenos">684</span></a><span class="sd">            - "speaker_mapping": dict mapping matched ref -&gt; hyp speaker</span>
+</span><span id="WDER-685"><a href="#WDER-685"><span class="linenos">685</span></a><span class="sd">    """</span>
+</span><span id="WDER-686"><a href="#WDER-686"><span class="linenos">686</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">detailed</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+</span><span id="WDER-687"><a href="#WDER-687"><span class="linenos">687</span></a>        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"detailed must be a boolean."</span><span class="p">)</span>
+</span><span id="WDER-688"><a href="#WDER-688"><span class="linenos">688</span></a>    <span class="n">check_word_input</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+</span><span id="WDER-689"><a href="#WDER-689"><span class="linenos">689</span></a>    <span class="n">check_word_input</span><span class="p">(</span><span class="n">hyp</span><span class="p">)</span>
+</span><span id="WDER-690"><a href="#WDER-690"><span class="linenos">690</span></a>
+</span><span id="WDER-691"><a href="#WDER-691"><span class="linenos">691</span></a>    <span class="n">ref_expanded</span> <span class="o">=</span> <span class="n">_expand_word_tuples</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+</span><span id="WDER-692"><a href="#WDER-692"><span class="linenos">692</span></a>    <span class="n">hyp_expanded</span> <span class="o">=</span> <span class="n">_expand_word_tuples</span><span class="p">(</span><span class="n">hyp</span><span class="p">)</span>
+</span><span id="WDER-693"><a href="#WDER-693"><span class="linenos">693</span></a>
+</span><span id="WDER-694"><a href="#WDER-694"><span class="linenos">694</span></a>    <span class="n">ref_spks</span> <span class="o">=</span> <span class="p">[</span><span class="n">spk</span> <span class="k">for</span> <span class="n">spk</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">ref_expanded</span><span class="p">]</span>
+</span><span id="WDER-695"><a href="#WDER-695"><span class="linenos">695</span></a>    <span class="n">ref_words</span> <span class="o">=</span> <span class="p">[</span><span class="n">w</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">ref_expanded</span><span class="p">]</span>
+</span><span id="WDER-696"><a href="#WDER-696"><span class="linenos">696</span></a>    <span class="n">hyp_spks</span> <span class="o">=</span> <span class="p">[</span><span class="n">spk</span> <span class="k">for</span> <span class="n">spk</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">hyp_expanded</span><span class="p">]</span>
+</span><span id="WDER-697"><a href="#WDER-697"><span class="linenos">697</span></a>    <span class="n">hyp_words</span> <span class="o">=</span> <span class="p">[</span><span class="n">w</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">hyp_expanded</span><span class="p">]</span>
+</span><span id="WDER-698"><a href="#WDER-698"><span class="linenos">698</span></a>
+</span><span id="WDER-699"><a href="#WDER-699"><span class="linenos">699</span></a>    <span class="n">_</span><span class="p">,</span> <span class="n">align</span> <span class="o">=</span> <span class="n">levenshtein_with_edits</span><span class="p">(</span><span class="n">ref_words</span><span class="p">,</span> <span class="n">hyp_words</span><span class="p">)</span>
+</span><span id="WDER-700"><a href="#WDER-700"><span class="linenos">700</span></a>
+</span><span id="WDER-701"><a href="#WDER-701"><span class="linenos">701</span></a>    <span class="n">wer_insert</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="WDER-702"><a href="#WDER-702"><span class="linenos">702</span></a>    <span class="n">wer_delete</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="WDER-703"><a href="#WDER-703"><span class="linenos">703</span></a>    <span class="n">wer_sub</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="WDER-704"><a href="#WDER-704"><span class="linenos">704</span></a>    <span class="n">wer_correct</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="WDER-705"><a href="#WDER-705"><span class="linenos">705</span></a>    <span class="n">aligned_spk_pairs</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="WDER-706"><a href="#WDER-706"><span class="linenos">706</span></a>
+</span><span id="WDER-707"><a href="#WDER-707"><span class="linenos">707</span></a>    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">align</span><span class="p">:</span>
+</span><span id="WDER-708"><a href="#WDER-708"><span class="linenos">708</span></a>        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+</span><span id="WDER-709"><a href="#WDER-709"><span class="linenos">709</span></a>            <span class="n">wer_insert</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="WDER-710"><a href="#WDER-710"><span class="linenos">710</span></a>        <span class="k">elif</span> <span class="n">j</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+</span><span id="WDER-711"><a href="#WDER-711"><span class="linenos">711</span></a>            <span class="n">wer_delete</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="WDER-712"><a href="#WDER-712"><span class="linenos">712</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="WDER-713"><a href="#WDER-713"><span class="linenos">713</span></a>            <span class="k">if</span> <span class="n">ref_words</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">hyp_words</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+</span><span id="WDER-714"><a href="#WDER-714"><span class="linenos">714</span></a>                <span class="n">wer_correct</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="WDER-715"><a href="#WDER-715"><span class="linenos">715</span></a>            <span class="k">else</span><span class="p">:</span>
+</span><span id="WDER-716"><a href="#WDER-716"><span class="linenos">716</span></a>                <span class="n">wer_sub</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="WDER-717"><a href="#WDER-717"><span class="linenos">717</span></a>            <span class="n">aligned_spk_pairs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">ref_spks</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">hyp_spks</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span>
+</span><span id="WDER-718"><a href="#WDER-718"><span class="linenos">718</span></a>
+</span><span id="WDER-719"><a href="#WDER-719"><span class="linenos">719</span></a>    <span class="n">wer_total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref_words</span><span class="p">)</span>
+</span><span id="WDER-720"><a href="#WDER-720"><span class="linenos">720</span></a>    <span class="n">wer_val</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="WDER-721"><a href="#WDER-721"><span class="linenos">721</span></a>        <span class="mf">0.0</span> <span class="k">if</span> <span class="n">wer_total</span> <span class="o">==</span> <span class="mi">0</span>
+</span><span id="WDER-722"><a href="#WDER-722"><span class="linenos">722</span></a>        <span class="k">else</span> <span class="nb">float</span><span class="p">((</span><span class="n">wer_insert</span> <span class="o">+</span> <span class="n">wer_delete</span> <span class="o">+</span> <span class="n">wer_sub</span><span class="p">)</span> <span class="o">/</span> <span class="n">wer_total</span><span class="p">)</span>
+</span><span id="WDER-723"><a href="#WDER-723"><span class="linenos">723</span></a>    <span class="p">)</span>
+</span><span id="WDER-724"><a href="#WDER-724"><span class="linenos">724</span></a>
+</span><span id="WDER-725"><a href="#WDER-725"><span class="linenos">725</span></a>    <span class="n">wder_total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">aligned_spk_pairs</span><span class="p">)</span>
+</span><span id="WDER-726"><a href="#WDER-726"><span class="linenos">726</span></a>    <span class="k">if</span> <span class="n">wder_total</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="WDER-727"><a href="#WDER-727"><span class="linenos">727</span></a>        <span class="n">wder_correct</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="WDER-728"><a href="#WDER-728"><span class="linenos">728</span></a>        <span class="n">wder_sub</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="WDER-729"><a href="#WDER-729"><span class="linenos">729</span></a>        <span class="n">wder_val</span> <span class="o">=</span> <span class="mf">0.0</span>
+</span><span id="WDER-730"><a href="#WDER-730"><span class="linenos">730</span></a>        <span class="n">speaker_mapping</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="WDER-731"><a href="#WDER-731"><span class="linenos">731</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="WDER-732"><a href="#WDER-732"><span class="linenos">732</span></a>        <span class="n">ref_index</span> <span class="o">=</span> <span class="n">build_speaker_index</span><span class="p">(</span><span class="n">ref_expanded</span><span class="p">)</span>
+</span><span id="WDER-733"><a href="#WDER-733"><span class="linenos">733</span></a>        <span class="n">hyp_index</span> <span class="o">=</span> <span class="n">build_speaker_index</span><span class="p">(</span><span class="n">hyp_expanded</span><span class="p">)</span>
+</span><span id="WDER-734"><a href="#WDER-734"><span class="linenos">734</span></a>        <span class="n">cost_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">ref_index</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">hyp_index</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+</span><span id="WDER-735"><a href="#WDER-735"><span class="linenos">735</span></a>        <span class="k">for</span> <span class="n">r_spk</span><span class="p">,</span> <span class="n">h_spk</span> <span class="ow">in</span> <span class="n">aligned_spk_pairs</span><span class="p">:</span>
+</span><span id="WDER-736"><a href="#WDER-736"><span class="linenos">736</span></a>            <span class="n">cost_matrix</span><span class="p">[</span><span class="n">ref_index</span><span class="p">[</span><span class="n">r_spk</span><span class="p">],</span> <span class="n">hyp_index</span><span class="p">[</span><span class="n">h_spk</span><span class="p">]]</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="WDER-737"><a href="#WDER-737"><span class="linenos">737</span></a>
+</span><span id="WDER-738"><a href="#WDER-738"><span class="linenos">738</span></a>        <span class="n">row_index</span><span class="p">,</span> <span class="n">col_index</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">linear_sum_assignment</span><span class="p">(</span>
+</span><span id="WDER-739"><a href="#WDER-739"><span class="linenos">739</span></a>            <span class="n">cost_matrix</span><span class="p">,</span> <span class="n">maximize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="WDER-740"><a href="#WDER-740"><span class="linenos">740</span></a>        <span class="n">wder_correct</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cost_matrix</span><span class="p">[</span><span class="n">row_index</span><span class="p">,</span> <span class="n">col_index</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+</span><span id="WDER-741"><a href="#WDER-741"><span class="linenos">741</span></a>        <span class="n">wder_sub</span> <span class="o">=</span> <span class="n">wder_total</span> <span class="o">-</span> <span class="n">wder_correct</span>
+</span><span id="WDER-742"><a href="#WDER-742"><span class="linenos">742</span></a>        <span class="n">wder_val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">wder_sub</span> <span class="o">/</span> <span class="n">wder_total</span><span class="p">)</span>
+</span><span id="WDER-743"><a href="#WDER-743"><span class="linenos">743</span></a>
+</span><span id="WDER-744"><a href="#WDER-744"><span class="linenos">744</span></a>        <span class="n">inv_ref</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">spk</span> <span class="k">for</span> <span class="n">spk</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ref_index</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+</span><span id="WDER-745"><a href="#WDER-745"><span class="linenos">745</span></a>        <span class="n">inv_hyp</span> <span class="o">=</span> <span class="p">{</span><span class="n">j</span><span class="p">:</span> <span class="n">spk</span> <span class="k">for</span> <span class="n">spk</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">hyp_index</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+</span><span id="WDER-746"><a href="#WDER-746"><span class="linenos">746</span></a>        <span class="n">speaker_mapping</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="WDER-747"><a href="#WDER-747"><span class="linenos">747</span></a>            <span class="n">inv_ref</span><span class="p">[</span><span class="n">r</span><span class="p">]:</span> <span class="n">inv_hyp</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+</span><span id="WDER-748"><a href="#WDER-748"><span class="linenos">748</span></a>            <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">row_index</span><span class="p">,</span> <span class="n">col_index</span><span class="p">)</span>
+</span><span id="WDER-749"><a href="#WDER-749"><span class="linenos">749</span></a>            <span class="k">if</span> <span class="n">cost_matrix</span><span class="p">[</span><span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</span><span id="WDER-750"><a href="#WDER-750"><span class="linenos">750</span></a>        <span class="p">}</span>
+</span><span id="WDER-751"><a href="#WDER-751"><span class="linenos">751</span></a>
+</span><span id="WDER-752"><a href="#WDER-752"><span class="linenos">752</span></a>    <span class="k">if</span> <span class="n">detailed</span><span class="p">:</span>
+</span><span id="WDER-753"><a href="#WDER-753"><span class="linenos">753</span></a>        <span class="k">return</span> <span class="p">{</span>
+</span><span id="WDER-754"><a href="#WDER-754"><span class="linenos">754</span></a>            <span class="s2">"wder"</span><span class="p">:</span> <span class="n">wder_val</span><span class="p">,</span>
+</span><span id="WDER-755"><a href="#WDER-755"><span class="linenos">755</span></a>            <span class="s2">"wder_sub"</span><span class="p">:</span> <span class="n">wder_sub</span><span class="p">,</span>
+</span><span id="WDER-756"><a href="#WDER-756"><span class="linenos">756</span></a>            <span class="s2">"wder_correct"</span><span class="p">:</span> <span class="n">wder_correct</span><span class="p">,</span>
+</span><span id="WDER-757"><a href="#WDER-757"><span class="linenos">757</span></a>            <span class="s2">"wder_total"</span><span class="p">:</span> <span class="n">wder_total</span><span class="p">,</span>
+</span><span id="WDER-758"><a href="#WDER-758"><span class="linenos">758</span></a>            <span class="s2">"wer"</span><span class="p">:</span> <span class="n">wer_val</span><span class="p">,</span>
+</span><span id="WDER-759"><a href="#WDER-759"><span class="linenos">759</span></a>            <span class="s2">"wer_insert"</span><span class="p">:</span> <span class="n">wer_insert</span><span class="p">,</span>
+</span><span id="WDER-760"><a href="#WDER-760"><span class="linenos">760</span></a>            <span class="s2">"wer_delete"</span><span class="p">:</span> <span class="n">wer_delete</span><span class="p">,</span>
+</span><span id="WDER-761"><a href="#WDER-761"><span class="linenos">761</span></a>            <span class="s2">"wer_sub"</span><span class="p">:</span> <span class="n">wer_sub</span><span class="p">,</span>
+</span><span id="WDER-762"><a href="#WDER-762"><span class="linenos">762</span></a>            <span class="s2">"wer_correct"</span><span class="p">:</span> <span class="n">wer_correct</span><span class="p">,</span>
+</span><span id="WDER-763"><a href="#WDER-763"><span class="linenos">763</span></a>            <span class="s2">"wer_total"</span><span class="p">:</span> <span class="n">wer_total</span><span class="p">,</span>
+</span><span id="WDER-764"><a href="#WDER-764"><span class="linenos">764</span></a>            <span class="s2">"speaker_mapping"</span><span class="p">:</span> <span class="n">speaker_mapping</span><span class="p">,</span>
+</span><span id="WDER-765"><a href="#WDER-765"><span class="linenos">765</span></a>        <span class="p">}</span>
+</span><span id="WDER-766"><a href="#WDER-766"><span class="linenos">766</span></a>    <span class="k">return</span> <span class="n">wder_val</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Compute Word Diarization Error Rate (WDER).</p>
+
+<p>WDER measures the fraction of aligned words (correct ASR words plus
+substituted ASR words after Levenshtein alignment between reference and
+hypothesis transcripts) that are assigned to the wrong speaker after
+optimal 1-to-1 speaker mapping (Shafey et al., Interspeech 2019).</p>
+
+<p>Args:
+    ref: a list of (speaker, word) tuples of type (str, str) for the
+        ground truth. Each tuple's text may be a single word or
+        whitespace-separated words spoken by that speaker.
+    hyp: a list of (speaker, word) tuples of type (str, str) for the
+        hypothesis, same format as <code>ref</code>.
+    detailed: bool, if True, return a dict containing WDER, word counts
+        (wder_sub, wder_correct, wder_total), WER breakdown, and the
+        optimal speaker_mapping.</p>
+
+<p>Returns:
+    If <code>detailed=False</code>, a float number for the Word Diarization Error
+    Rate.
+    If <code>detailed=True</code>, a dict with keys:
+        - "wder": float, Word Diarization Error Rate
+        - "wder_sub": int, aligned words with wrong speaker label
+        - "wder_correct": int, aligned words with correct speaker label
+        - "wder_total": int, total aligned words (wer_correct + wer_sub)
+        - "wer": float, Word Error Rate of the transcript
+        - "wer_insert": int, inserted words
+        - "wer_delete": int, deleted words
+        - "wer_sub": int, substituted words
+        - "wer_correct": int, correct words
+        - "wer_total": int, total reference words
+        - "speaker_mapping": dict mapping matched ref -> hyp speaker</p>
+</div>
+
+
+                </section>
                 <section id="corpus_der">
                             <input id="corpus_der-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
@@ -325,71 +506,71 @@ JER = (1 / |S_ref|) * \sum_{r \in S_ref} JER_r
 
     </div>
     <a class="headerlink" href="#corpus_der"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="corpus_der-536"><a href="#corpus_der-536"><span class="linenos">536</span></a><span class="k">def</span><span class="w"> </span><span class="nf">corpus_der</span><span class="p">(</span><span class="n">refs</span><span class="p">,</span> <span class="n">hyps</span><span class="p">,</span> <span class="n">collar</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">skip_overlap</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">detailed</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="corpus_der-537"><a href="#corpus_der-537"><span class="linenos">537</span></a><span class="w">    </span><span class="sd">"""Compute micro-averaged Corpus Diarization Error Rate across recordings.</span>
-</span><span id="corpus_der-538"><a href="#corpus_der-538"><span class="linenos">538</span></a>
-</span><span id="corpus_der-539"><a href="#corpus_der-539"><span class="linenos">539</span></a><span class="sd">    Corpus DER aggregates total missed speech, false alarm, and speaker</span>
-</span><span id="corpus_der-540"><a href="#corpus_der-540"><span class="linenos">540</span></a><span class="sd">    confusion durations across all recordings and divides by the total</span>
-</span><span id="corpus_der-541"><a href="#corpus_der-541"><span class="linenos">541</span></a><span class="sd">    reference duration across all recordings.</span>
-</span><span id="corpus_der-542"><a href="#corpus_der-542"><span class="linenos">542</span></a>
-</span><span id="corpus_der-543"><a href="#corpus_der-543"><span class="linenos">543</span></a><span class="sd">    Args:</span>
-</span><span id="corpus_der-544"><a href="#corpus_der-544"><span class="linenos">544</span></a><span class="sd">        refs: a dict mapping recording_id -&gt; ref segments, or a list of</span>
-</span><span id="corpus_der-545"><a href="#corpus_der-545"><span class="linenos">545</span></a><span class="sd">            ref segment lists</span>
-</span><span id="corpus_der-546"><a href="#corpus_der-546"><span class="linenos">546</span></a><span class="sd">        hyps: a dict mapping recording_id -&gt; hyp segments, or a list of</span>
-</span><span id="corpus_der-547"><a href="#corpus_der-547"><span class="linenos">547</span></a><span class="sd">            hyp segment lists (matching `refs`)</span>
-</span><span id="corpus_der-548"><a href="#corpus_der-548"><span class="linenos">548</span></a><span class="sd">        collar: float, no-score zone (in seconds) around each reference</span>
-</span><span id="corpus_der-549"><a href="#corpus_der-549"><span class="linenos">549</span></a><span class="sd">            speaker boundary</span>
-</span><span id="corpus_der-550"><a href="#corpus_der-550"><span class="linenos">550</span></a><span class="sd">        skip_overlap: bool, if True, exclude regions where more than one</span>
-</span><span id="corpus_der-551"><a href="#corpus_der-551"><span class="linenos">551</span></a><span class="sd">            reference speaker is active</span>
-</span><span id="corpus_der-552"><a href="#corpus_der-552"><span class="linenos">552</span></a><span class="sd">        detailed: bool, if True, return a dict with corpus-level totals and</span>
-</span><span id="corpus_der-553"><a href="#corpus_der-553"><span class="linenos">553</span></a><span class="sd">            per-recording results</span>
-</span><span id="corpus_der-554"><a href="#corpus_der-554"><span class="linenos">554</span></a>
-</span><span id="corpus_der-555"><a href="#corpus_der-555"><span class="linenos">555</span></a><span class="sd">    Returns:</span>
-</span><span id="corpus_der-556"><a href="#corpus_der-556"><span class="linenos">556</span></a><span class="sd">        If `detailed=False`, a float number for the Corpus DER.</span>
-</span><span id="corpus_der-557"><a href="#corpus_der-557"><span class="linenos">557</span></a><span class="sd">        If `detailed=True`, a dict with keys:</span>
-</span><span id="corpus_der-558"><a href="#corpus_der-558"><span class="linenos">558</span></a><span class="sd">            - "der": float, Corpus DER</span>
-</span><span id="corpus_der-559"><a href="#corpus_der-559"><span class="linenos">559</span></a><span class="sd">            - "miss": float, total missed speech duration in seconds</span>
-</span><span id="corpus_der-560"><a href="#corpus_der-560"><span class="linenos">560</span></a><span class="sd">            - "false_alarm": float, total false alarm duration in seconds</span>
-</span><span id="corpus_der-561"><a href="#corpus_der-561"><span class="linenos">561</span></a><span class="sd">            - "confusion": float, total speaker confusion duration in seconds</span>
-</span><span id="corpus_der-562"><a href="#corpus_der-562"><span class="linenos">562</span></a><span class="sd">            - "ref_length": float, total scored reference length in seconds</span>
-</span><span id="corpus_der-563"><a href="#corpus_der-563"><span class="linenos">563</span></a><span class="sd">            - "per_recording": dict or list of per-recording detailed results</span>
-</span><span id="corpus_der-564"><a href="#corpus_der-564"><span class="linenos">564</span></a><span class="sd">    """</span>
-</span><span id="corpus_der-565"><a href="#corpus_der-565"><span class="linenos">565</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">detailed</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-</span><span id="corpus_der-566"><a href="#corpus_der-566"><span class="linenos">566</span></a>        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"detailed must be a boolean."</span><span class="p">)</span>
-</span><span id="corpus_der-567"><a href="#corpus_der-567"><span class="linenos">567</span></a>    <span class="n">pairs</span><span class="p">,</span> <span class="n">is_dict</span> <span class="o">=</span> <span class="n">_normalize_corpus_inputs</span><span class="p">(</span><span class="n">refs</span><span class="p">,</span> <span class="n">hyps</span><span class="p">)</span>
-</span><span id="corpus_der-568"><a href="#corpus_der-568"><span class="linenos">568</span></a>
-</span><span id="corpus_der-569"><a href="#corpus_der-569"><span class="linenos">569</span></a>    <span class="n">total_miss</span> <span class="o">=</span> <span class="mf">0.0</span>
-</span><span id="corpus_der-570"><a href="#corpus_der-570"><span class="linenos">570</span></a>    <span class="n">total_fa</span> <span class="o">=</span> <span class="mf">0.0</span>
-</span><span id="corpus_der-571"><a href="#corpus_der-571"><span class="linenos">571</span></a>    <span class="n">total_confusion</span> <span class="o">=</span> <span class="mf">0.0</span>
-</span><span id="corpus_der-572"><a href="#corpus_der-572"><span class="linenos">572</span></a>    <span class="n">total_ref_length</span> <span class="o">=</span> <span class="mf">0.0</span>
-</span><span id="corpus_der-573"><a href="#corpus_der-573"><span class="linenos">573</span></a>    <span class="n">per_recording</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="corpus_der-574"><a href="#corpus_der-574"><span class="linenos">574</span></a>
-</span><span id="corpus_der-575"><a href="#corpus_der-575"><span class="linenos">575</span></a>    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
-</span><span id="corpus_der-576"><a href="#corpus_der-576"><span class="linenos">576</span></a>        <span class="n">res</span> <span class="o">=</span> <span class="n">DER</span><span class="p">(</span>
-</span><span id="corpus_der-577"><a href="#corpus_der-577"><span class="linenos">577</span></a>            <span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">,</span> <span class="n">collar</span><span class="o">=</span><span class="n">collar</span><span class="p">,</span> <span class="n">skip_overlap</span><span class="o">=</span><span class="n">skip_overlap</span><span class="p">,</span> <span class="n">detailed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="corpus_der-578"><a href="#corpus_der-578"><span class="linenos">578</span></a>        <span class="n">total_miss</span> <span class="o">+=</span> <span class="n">res</span><span class="p">[</span><span class="s2">"miss"</span><span class="p">]</span>
-</span><span id="corpus_der-579"><a href="#corpus_der-579"><span class="linenos">579</span></a>        <span class="n">total_fa</span> <span class="o">+=</span> <span class="n">res</span><span class="p">[</span><span class="s2">"false_alarm"</span><span class="p">]</span>
-</span><span id="corpus_der-580"><a href="#corpus_der-580"><span class="linenos">580</span></a>        <span class="n">total_confusion</span> <span class="o">+=</span> <span class="n">res</span><span class="p">[</span><span class="s2">"confusion"</span><span class="p">]</span>
-</span><span id="corpus_der-581"><a href="#corpus_der-581"><span class="linenos">581</span></a>        <span class="n">total_ref_length</span> <span class="o">+=</span> <span class="n">res</span><span class="p">[</span><span class="s2">"ref_length"</span><span class="p">]</span>
-</span><span id="corpus_der-582"><a href="#corpus_der-582"><span class="linenos">582</span></a>        <span class="n">per_recording</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span>
-</span><span id="corpus_der-583"><a href="#corpus_der-583"><span class="linenos">583</span></a>
-</span><span id="corpus_der-584"><a href="#corpus_der-584"><span class="linenos">584</span></a>    <span class="k">if</span> <span class="n">total_ref_length</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-</span><span id="corpus_der-585"><a href="#corpus_der-585"><span class="linenos">585</span></a>        <span class="n">der_val</span> <span class="o">=</span> <span class="mf">0.0</span>
-</span><span id="corpus_der-586"><a href="#corpus_der-586"><span class="linenos">586</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="corpus_der-587"><a href="#corpus_der-587"><span class="linenos">587</span></a>        <span class="n">der_val</span> <span class="o">=</span> <span class="p">(</span><span class="n">total_miss</span> <span class="o">+</span> <span class="n">total_fa</span> <span class="o">+</span> <span class="n">total_confusion</span><span class="p">)</span> <span class="o">/</span> <span class="n">total_ref_length</span>
-</span><span id="corpus_der-588"><a href="#corpus_der-588"><span class="linenos">588</span></a>
-</span><span id="corpus_der-589"><a href="#corpus_der-589"><span class="linenos">589</span></a>    <span class="k">if</span> <span class="n">detailed</span><span class="p">:</span>
-</span><span id="corpus_der-590"><a href="#corpus_der-590"><span class="linenos">590</span></a>        <span class="k">return</span> <span class="p">{</span>
-</span><span id="corpus_der-591"><a href="#corpus_der-591"><span class="linenos">591</span></a>            <span class="s2">"der"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">der_val</span><span class="p">),</span>
-</span><span id="corpus_der-592"><a href="#corpus_der-592"><span class="linenos">592</span></a>            <span class="s2">"miss"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">total_miss</span><span class="p">),</span>
-</span><span id="corpus_der-593"><a href="#corpus_der-593"><span class="linenos">593</span></a>            <span class="s2">"false_alarm"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">total_fa</span><span class="p">),</span>
-</span><span id="corpus_der-594"><a href="#corpus_der-594"><span class="linenos">594</span></a>            <span class="s2">"confusion"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">total_confusion</span><span class="p">),</span>
-</span><span id="corpus_der-595"><a href="#corpus_der-595"><span class="linenos">595</span></a>            <span class="s2">"ref_length"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">total_ref_length</span><span class="p">),</span>
-</span><span id="corpus_der-596"><a href="#corpus_der-596"><span class="linenos">596</span></a>            <span class="s2">"per_recording"</span><span class="p">:</span> <span class="n">per_recording</span> <span class="k">if</span> <span class="n">is_dict</span> <span class="k">else</span> <span class="p">[</span>
-</span><span id="corpus_der-597"><a href="#corpus_der-597"><span class="linenos">597</span></a>                <span class="n">per_recording</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pairs</span><span class="p">))</span>
-</span><span id="corpus_der-598"><a href="#corpus_der-598"><span class="linenos">598</span></a>            <span class="p">],</span>
-</span><span id="corpus_der-599"><a href="#corpus_der-599"><span class="linenos">599</span></a>        <span class="p">}</span>
-</span><span id="corpus_der-600"><a href="#corpus_der-600"><span class="linenos">600</span></a>    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">der_val</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="corpus_der-786"><a href="#corpus_der-786"><span class="linenos">786</span></a><span class="k">def</span><span class="w"> </span><span class="nf">corpus_der</span><span class="p">(</span><span class="n">refs</span><span class="p">,</span> <span class="n">hyps</span><span class="p">,</span> <span class="n">collar</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">skip_overlap</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">detailed</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="corpus_der-787"><a href="#corpus_der-787"><span class="linenos">787</span></a><span class="w">    </span><span class="sd">"""Compute micro-averaged Corpus Diarization Error Rate across recordings.</span>
+</span><span id="corpus_der-788"><a href="#corpus_der-788"><span class="linenos">788</span></a>
+</span><span id="corpus_der-789"><a href="#corpus_der-789"><span class="linenos">789</span></a><span class="sd">    Corpus DER aggregates total missed speech, false alarm, and speaker</span>
+</span><span id="corpus_der-790"><a href="#corpus_der-790"><span class="linenos">790</span></a><span class="sd">    confusion durations across all recordings and divides by the total</span>
+</span><span id="corpus_der-791"><a href="#corpus_der-791"><span class="linenos">791</span></a><span class="sd">    reference duration across all recordings.</span>
+</span><span id="corpus_der-792"><a href="#corpus_der-792"><span class="linenos">792</span></a>
+</span><span id="corpus_der-793"><a href="#corpus_der-793"><span class="linenos">793</span></a><span class="sd">    Args:</span>
+</span><span id="corpus_der-794"><a href="#corpus_der-794"><span class="linenos">794</span></a><span class="sd">        refs: a dict mapping recording_id -&gt; ref segments, or a list of</span>
+</span><span id="corpus_der-795"><a href="#corpus_der-795"><span class="linenos">795</span></a><span class="sd">            ref segment lists</span>
+</span><span id="corpus_der-796"><a href="#corpus_der-796"><span class="linenos">796</span></a><span class="sd">        hyps: a dict mapping recording_id -&gt; hyp segments, or a list of</span>
+</span><span id="corpus_der-797"><a href="#corpus_der-797"><span class="linenos">797</span></a><span class="sd">            hyp segment lists (matching `refs`)</span>
+</span><span id="corpus_der-798"><a href="#corpus_der-798"><span class="linenos">798</span></a><span class="sd">        collar: float, no-score zone (in seconds) around each reference</span>
+</span><span id="corpus_der-799"><a href="#corpus_der-799"><span class="linenos">799</span></a><span class="sd">            speaker boundary</span>
+</span><span id="corpus_der-800"><a href="#corpus_der-800"><span class="linenos">800</span></a><span class="sd">        skip_overlap: bool, if True, exclude regions where more than one</span>
+</span><span id="corpus_der-801"><a href="#corpus_der-801"><span class="linenos">801</span></a><span class="sd">            reference speaker is active</span>
+</span><span id="corpus_der-802"><a href="#corpus_der-802"><span class="linenos">802</span></a><span class="sd">        detailed: bool, if True, return a dict with corpus-level totals and</span>
+</span><span id="corpus_der-803"><a href="#corpus_der-803"><span class="linenos">803</span></a><span class="sd">            per-recording results</span>
+</span><span id="corpus_der-804"><a href="#corpus_der-804"><span class="linenos">804</span></a>
+</span><span id="corpus_der-805"><a href="#corpus_der-805"><span class="linenos">805</span></a><span class="sd">    Returns:</span>
+</span><span id="corpus_der-806"><a href="#corpus_der-806"><span class="linenos">806</span></a><span class="sd">        If `detailed=False`, a float number for the Corpus DER.</span>
+</span><span id="corpus_der-807"><a href="#corpus_der-807"><span class="linenos">807</span></a><span class="sd">        If `detailed=True`, a dict with keys:</span>
+</span><span id="corpus_der-808"><a href="#corpus_der-808"><span class="linenos">808</span></a><span class="sd">            - "der": float, Corpus DER</span>
+</span><span id="corpus_der-809"><a href="#corpus_der-809"><span class="linenos">809</span></a><span class="sd">            - "miss": float, total missed speech duration in seconds</span>
+</span><span id="corpus_der-810"><a href="#corpus_der-810"><span class="linenos">810</span></a><span class="sd">            - "false_alarm": float, total false alarm duration in seconds</span>
+</span><span id="corpus_der-811"><a href="#corpus_der-811"><span class="linenos">811</span></a><span class="sd">            - "confusion": float, total speaker confusion duration in seconds</span>
+</span><span id="corpus_der-812"><a href="#corpus_der-812"><span class="linenos">812</span></a><span class="sd">            - "ref_length": float, total scored reference length in seconds</span>
+</span><span id="corpus_der-813"><a href="#corpus_der-813"><span class="linenos">813</span></a><span class="sd">            - "per_recording": dict or list of per-recording detailed results</span>
+</span><span id="corpus_der-814"><a href="#corpus_der-814"><span class="linenos">814</span></a><span class="sd">    """</span>
+</span><span id="corpus_der-815"><a href="#corpus_der-815"><span class="linenos">815</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">detailed</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+</span><span id="corpus_der-816"><a href="#corpus_der-816"><span class="linenos">816</span></a>        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"detailed must be a boolean."</span><span class="p">)</span>
+</span><span id="corpus_der-817"><a href="#corpus_der-817"><span class="linenos">817</span></a>    <span class="n">pairs</span><span class="p">,</span> <span class="n">is_dict</span> <span class="o">=</span> <span class="n">_normalize_corpus_inputs</span><span class="p">(</span><span class="n">refs</span><span class="p">,</span> <span class="n">hyps</span><span class="p">)</span>
+</span><span id="corpus_der-818"><a href="#corpus_der-818"><span class="linenos">818</span></a>
+</span><span id="corpus_der-819"><a href="#corpus_der-819"><span class="linenos">819</span></a>    <span class="n">total_miss</span> <span class="o">=</span> <span class="mf">0.0</span>
+</span><span id="corpus_der-820"><a href="#corpus_der-820"><span class="linenos">820</span></a>    <span class="n">total_fa</span> <span class="o">=</span> <span class="mf">0.0</span>
+</span><span id="corpus_der-821"><a href="#corpus_der-821"><span class="linenos">821</span></a>    <span class="n">total_confusion</span> <span class="o">=</span> <span class="mf">0.0</span>
+</span><span id="corpus_der-822"><a href="#corpus_der-822"><span class="linenos">822</span></a>    <span class="n">total_ref_length</span> <span class="o">=</span> <span class="mf">0.0</span>
+</span><span id="corpus_der-823"><a href="#corpus_der-823"><span class="linenos">823</span></a>    <span class="n">per_recording</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="corpus_der-824"><a href="#corpus_der-824"><span class="linenos">824</span></a>
+</span><span id="corpus_der-825"><a href="#corpus_der-825"><span class="linenos">825</span></a>    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
+</span><span id="corpus_der-826"><a href="#corpus_der-826"><span class="linenos">826</span></a>        <span class="n">res</span> <span class="o">=</span> <span class="n">DER</span><span class="p">(</span>
+</span><span id="corpus_der-827"><a href="#corpus_der-827"><span class="linenos">827</span></a>            <span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">,</span> <span class="n">collar</span><span class="o">=</span><span class="n">collar</span><span class="p">,</span> <span class="n">skip_overlap</span><span class="o">=</span><span class="n">skip_overlap</span><span class="p">,</span> <span class="n">detailed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="corpus_der-828"><a href="#corpus_der-828"><span class="linenos">828</span></a>        <span class="n">total_miss</span> <span class="o">+=</span> <span class="n">res</span><span class="p">[</span><span class="s2">"miss"</span><span class="p">]</span>
+</span><span id="corpus_der-829"><a href="#corpus_der-829"><span class="linenos">829</span></a>        <span class="n">total_fa</span> <span class="o">+=</span> <span class="n">res</span><span class="p">[</span><span class="s2">"false_alarm"</span><span class="p">]</span>
+</span><span id="corpus_der-830"><a href="#corpus_der-830"><span class="linenos">830</span></a>        <span class="n">total_confusion</span> <span class="o">+=</span> <span class="n">res</span><span class="p">[</span><span class="s2">"confusion"</span><span class="p">]</span>
+</span><span id="corpus_der-831"><a href="#corpus_der-831"><span class="linenos">831</span></a>        <span class="n">total_ref_length</span> <span class="o">+=</span> <span class="n">res</span><span class="p">[</span><span class="s2">"ref_length"</span><span class="p">]</span>
+</span><span id="corpus_der-832"><a href="#corpus_der-832"><span class="linenos">832</span></a>        <span class="n">per_recording</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span>
+</span><span id="corpus_der-833"><a href="#corpus_der-833"><span class="linenos">833</span></a>
+</span><span id="corpus_der-834"><a href="#corpus_der-834"><span class="linenos">834</span></a>    <span class="k">if</span> <span class="n">total_ref_length</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+</span><span id="corpus_der-835"><a href="#corpus_der-835"><span class="linenos">835</span></a>        <span class="n">der_val</span> <span class="o">=</span> <span class="mf">0.0</span>
+</span><span id="corpus_der-836"><a href="#corpus_der-836"><span class="linenos">836</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="corpus_der-837"><a href="#corpus_der-837"><span class="linenos">837</span></a>        <span class="n">der_val</span> <span class="o">=</span> <span class="p">(</span><span class="n">total_miss</span> <span class="o">+</span> <span class="n">total_fa</span> <span class="o">+</span> <span class="n">total_confusion</span><span class="p">)</span> <span class="o">/</span> <span class="n">total_ref_length</span>
+</span><span id="corpus_der-838"><a href="#corpus_der-838"><span class="linenos">838</span></a>
+</span><span id="corpus_der-839"><a href="#corpus_der-839"><span class="linenos">839</span></a>    <span class="k">if</span> <span class="n">detailed</span><span class="p">:</span>
+</span><span id="corpus_der-840"><a href="#corpus_der-840"><span class="linenos">840</span></a>        <span class="k">return</span> <span class="p">{</span>
+</span><span id="corpus_der-841"><a href="#corpus_der-841"><span class="linenos">841</span></a>            <span class="s2">"der"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">der_val</span><span class="p">),</span>
+</span><span id="corpus_der-842"><a href="#corpus_der-842"><span class="linenos">842</span></a>            <span class="s2">"miss"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">total_miss</span><span class="p">),</span>
+</span><span id="corpus_der-843"><a href="#corpus_der-843"><span class="linenos">843</span></a>            <span class="s2">"false_alarm"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">total_fa</span><span class="p">),</span>
+</span><span id="corpus_der-844"><a href="#corpus_der-844"><span class="linenos">844</span></a>            <span class="s2">"confusion"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">total_confusion</span><span class="p">),</span>
+</span><span id="corpus_der-845"><a href="#corpus_der-845"><span class="linenos">845</span></a>            <span class="s2">"ref_length"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">total_ref_length</span><span class="p">),</span>
+</span><span id="corpus_der-846"><a href="#corpus_der-846"><span class="linenos">846</span></a>            <span class="s2">"per_recording"</span><span class="p">:</span> <span class="n">per_recording</span> <span class="k">if</span> <span class="n">is_dict</span> <span class="k">else</span> <span class="p">[</span>
+</span><span id="corpus_der-847"><a href="#corpus_der-847"><span class="linenos">847</span></a>                <span class="n">per_recording</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pairs</span><span class="p">))</span>
+</span><span id="corpus_der-848"><a href="#corpus_der-848"><span class="linenos">848</span></a>            <span class="p">],</span>
+</span><span id="corpus_der-849"><a href="#corpus_der-849"><span class="linenos">849</span></a>        <span class="p">}</span>
+</span><span id="corpus_der-850"><a href="#corpus_der-850"><span class="linenos">850</span></a>    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">der_val</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -435,60 +616,60 @@ reference duration across all recordings.</p>
 
     </div>
     <a class="headerlink" href="#corpus_jer"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="corpus_jer-603"><a href="#corpus_jer-603"><span class="linenos">603</span></a><span class="k">def</span><span class="w"> </span><span class="nf">corpus_jer</span><span class="p">(</span><span class="n">refs</span><span class="p">,</span> <span class="n">hyps</span><span class="p">,</span> <span class="n">collar</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">skip_overlap</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">detailed</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="corpus_jer-604"><a href="#corpus_jer-604"><span class="linenos">604</span></a><span class="w">    </span><span class="sd">"""Compute Corpus Jaccard Error Rate across multiple recordings.</span>
-</span><span id="corpus_jer-605"><a href="#corpus_jer-605"><span class="linenos">605</span></a>
-</span><span id="corpus_jer-606"><a href="#corpus_jer-606"><span class="linenos">606</span></a><span class="sd">    Corpus JER is the average of per-speaker Jaccard Error Rates across all</span>
-</span><span id="corpus_jer-607"><a href="#corpus_jer-607"><span class="linenos">607</span></a><span class="sd">    reference speakers in all recordings.</span>
-</span><span id="corpus_jer-608"><a href="#corpus_jer-608"><span class="linenos">608</span></a>
-</span><span id="corpus_jer-609"><a href="#corpus_jer-609"><span class="linenos">609</span></a><span class="sd">    Args:</span>
-</span><span id="corpus_jer-610"><a href="#corpus_jer-610"><span class="linenos">610</span></a><span class="sd">        refs: a dict mapping recording_id -&gt; ref segments, or a list of</span>
-</span><span id="corpus_jer-611"><a href="#corpus_jer-611"><span class="linenos">611</span></a><span class="sd">            ref segment lists</span>
-</span><span id="corpus_jer-612"><a href="#corpus_jer-612"><span class="linenos">612</span></a><span class="sd">        hyps: a dict mapping recording_id -&gt; hyp segments, or a list of</span>
-</span><span id="corpus_jer-613"><a href="#corpus_jer-613"><span class="linenos">613</span></a><span class="sd">            hyp segment lists (matching `refs`)</span>
-</span><span id="corpus_jer-614"><a href="#corpus_jer-614"><span class="linenos">614</span></a><span class="sd">        collar: float, no-score zone (in seconds) around each reference</span>
-</span><span id="corpus_jer-615"><a href="#corpus_jer-615"><span class="linenos">615</span></a><span class="sd">            speaker boundary</span>
-</span><span id="corpus_jer-616"><a href="#corpus_jer-616"><span class="linenos">616</span></a><span class="sd">        skip_overlap: bool, if True, exclude regions where more than one</span>
-</span><span id="corpus_jer-617"><a href="#corpus_jer-617"><span class="linenos">617</span></a><span class="sd">            reference speaker is active</span>
-</span><span id="corpus_jer-618"><a href="#corpus_jer-618"><span class="linenos">618</span></a><span class="sd">        detailed: bool, if True, return a dict with corpus JER, total number of</span>
-</span><span id="corpus_jer-619"><a href="#corpus_jer-619"><span class="linenos">619</span></a><span class="sd">            reference speakers, and per-recording results</span>
-</span><span id="corpus_jer-620"><a href="#corpus_jer-620"><span class="linenos">620</span></a>
-</span><span id="corpus_jer-621"><a href="#corpus_jer-621"><span class="linenos">621</span></a><span class="sd">    Returns:</span>
-</span><span id="corpus_jer-622"><a href="#corpus_jer-622"><span class="linenos">622</span></a><span class="sd">        If `detailed=False`, a float number for the Corpus JER.</span>
-</span><span id="corpus_jer-623"><a href="#corpus_jer-623"><span class="linenos">623</span></a><span class="sd">        If `detailed=True`, a dict with keys:</span>
-</span><span id="corpus_jer-624"><a href="#corpus_jer-624"><span class="linenos">624</span></a><span class="sd">            - "jer": float, Corpus JER</span>
-</span><span id="corpus_jer-625"><a href="#corpus_jer-625"><span class="linenos">625</span></a><span class="sd">            - "num_ref_speakers": int, total reference speakers across corpus</span>
-</span><span id="corpus_jer-626"><a href="#corpus_jer-626"><span class="linenos">626</span></a><span class="sd">            - "per_recording": dict or list of per-recording detailed results</span>
-</span><span id="corpus_jer-627"><a href="#corpus_jer-627"><span class="linenos">627</span></a><span class="sd">    """</span>
-</span><span id="corpus_jer-628"><a href="#corpus_jer-628"><span class="linenos">628</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">detailed</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-</span><span id="corpus_jer-629"><a href="#corpus_jer-629"><span class="linenos">629</span></a>        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"detailed must be a boolean."</span><span class="p">)</span>
-</span><span id="corpus_jer-630"><a href="#corpus_jer-630"><span class="linenos">630</span></a>    <span class="n">pairs</span><span class="p">,</span> <span class="n">is_dict</span> <span class="o">=</span> <span class="n">_normalize_corpus_inputs</span><span class="p">(</span><span class="n">refs</span><span class="p">,</span> <span class="n">hyps</span><span class="p">)</span>
-</span><span id="corpus_jer-631"><a href="#corpus_jer-631"><span class="linenos">631</span></a>
-</span><span id="corpus_jer-632"><a href="#corpus_jer-632"><span class="linenos">632</span></a>    <span class="n">total_speaker_jer</span> <span class="o">=</span> <span class="mf">0.0</span>
-</span><span id="corpus_jer-633"><a href="#corpus_jer-633"><span class="linenos">633</span></a>    <span class="n">total_ref_speakers</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="corpus_jer-634"><a href="#corpus_jer-634"><span class="linenos">634</span></a>    <span class="n">per_recording</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="corpus_jer-635"><a href="#corpus_jer-635"><span class="linenos">635</span></a>
-</span><span id="corpus_jer-636"><a href="#corpus_jer-636"><span class="linenos">636</span></a>    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
-</span><span id="corpus_jer-637"><a href="#corpus_jer-637"><span class="linenos">637</span></a>        <span class="n">res</span> <span class="o">=</span> <span class="n">JER</span><span class="p">(</span>
-</span><span id="corpus_jer-638"><a href="#corpus_jer-638"><span class="linenos">638</span></a>            <span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">,</span> <span class="n">collar</span><span class="o">=</span><span class="n">collar</span><span class="p">,</span> <span class="n">skip_overlap</span><span class="o">=</span><span class="n">skip_overlap</span><span class="p">,</span> <span class="n">detailed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="corpus_jer-639"><a href="#corpus_jer-639"><span class="linenos">639</span></a>        <span class="n">total_speaker_jer</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">"speaker_jer"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-</span><span id="corpus_jer-640"><a href="#corpus_jer-640"><span class="linenos">640</span></a>        <span class="n">total_ref_speakers</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">"speaker_jer"</span><span class="p">])</span>
-</span><span id="corpus_jer-641"><a href="#corpus_jer-641"><span class="linenos">641</span></a>        <span class="n">per_recording</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span>
-</span><span id="corpus_jer-642"><a href="#corpus_jer-642"><span class="linenos">642</span></a>
-</span><span id="corpus_jer-643"><a href="#corpus_jer-643"><span class="linenos">643</span></a>    <span class="k">if</span> <span class="n">total_ref_speakers</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="corpus_jer-644"><a href="#corpus_jer-644"><span class="linenos">644</span></a>        <span class="n">jer_val</span> <span class="o">=</span> <span class="mf">0.0</span>
-</span><span id="corpus_jer-645"><a href="#corpus_jer-645"><span class="linenos">645</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="corpus_jer-646"><a href="#corpus_jer-646"><span class="linenos">646</span></a>        <span class="n">jer_val</span> <span class="o">=</span> <span class="n">total_speaker_jer</span> <span class="o">/</span> <span class="n">total_ref_speakers</span>
-</span><span id="corpus_jer-647"><a href="#corpus_jer-647"><span class="linenos">647</span></a>
-</span><span id="corpus_jer-648"><a href="#corpus_jer-648"><span class="linenos">648</span></a>    <span class="k">if</span> <span class="n">detailed</span><span class="p">:</span>
-</span><span id="corpus_jer-649"><a href="#corpus_jer-649"><span class="linenos">649</span></a>        <span class="k">return</span> <span class="p">{</span>
-</span><span id="corpus_jer-650"><a href="#corpus_jer-650"><span class="linenos">650</span></a>            <span class="s2">"jer"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">jer_val</span><span class="p">),</span>
-</span><span id="corpus_jer-651"><a href="#corpus_jer-651"><span class="linenos">651</span></a>            <span class="s2">"num_ref_speakers"</span><span class="p">:</span> <span class="n">total_ref_speakers</span><span class="p">,</span>
-</span><span id="corpus_jer-652"><a href="#corpus_jer-652"><span class="linenos">652</span></a>            <span class="s2">"per_recording"</span><span class="p">:</span> <span class="n">per_recording</span> <span class="k">if</span> <span class="n">is_dict</span> <span class="k">else</span> <span class="p">[</span>
-</span><span id="corpus_jer-653"><a href="#corpus_jer-653"><span class="linenos">653</span></a>                <span class="n">per_recording</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pairs</span><span class="p">))</span>
-</span><span id="corpus_jer-654"><a href="#corpus_jer-654"><span class="linenos">654</span></a>            <span class="p">],</span>
-</span><span id="corpus_jer-655"><a href="#corpus_jer-655"><span class="linenos">655</span></a>        <span class="p">}</span>
-</span><span id="corpus_jer-656"><a href="#corpus_jer-656"><span class="linenos">656</span></a>    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">jer_val</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="corpus_jer-853"><a href="#corpus_jer-853"><span class="linenos">853</span></a><span class="k">def</span><span class="w"> </span><span class="nf">corpus_jer</span><span class="p">(</span><span class="n">refs</span><span class="p">,</span> <span class="n">hyps</span><span class="p">,</span> <span class="n">collar</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">skip_overlap</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">detailed</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="corpus_jer-854"><a href="#corpus_jer-854"><span class="linenos">854</span></a><span class="w">    </span><span class="sd">"""Compute Corpus Jaccard Error Rate across multiple recordings.</span>
+</span><span id="corpus_jer-855"><a href="#corpus_jer-855"><span class="linenos">855</span></a>
+</span><span id="corpus_jer-856"><a href="#corpus_jer-856"><span class="linenos">856</span></a><span class="sd">    Corpus JER is the average of per-speaker Jaccard Error Rates across all</span>
+</span><span id="corpus_jer-857"><a href="#corpus_jer-857"><span class="linenos">857</span></a><span class="sd">    reference speakers in all recordings.</span>
+</span><span id="corpus_jer-858"><a href="#corpus_jer-858"><span class="linenos">858</span></a>
+</span><span id="corpus_jer-859"><a href="#corpus_jer-859"><span class="linenos">859</span></a><span class="sd">    Args:</span>
+</span><span id="corpus_jer-860"><a href="#corpus_jer-860"><span class="linenos">860</span></a><span class="sd">        refs: a dict mapping recording_id -&gt; ref segments, or a list of</span>
+</span><span id="corpus_jer-861"><a href="#corpus_jer-861"><span class="linenos">861</span></a><span class="sd">            ref segment lists</span>
+</span><span id="corpus_jer-862"><a href="#corpus_jer-862"><span class="linenos">862</span></a><span class="sd">        hyps: a dict mapping recording_id -&gt; hyp segments, or a list of</span>
+</span><span id="corpus_jer-863"><a href="#corpus_jer-863"><span class="linenos">863</span></a><span class="sd">            hyp segment lists (matching `refs`)</span>
+</span><span id="corpus_jer-864"><a href="#corpus_jer-864"><span class="linenos">864</span></a><span class="sd">        collar: float, no-score zone (in seconds) around each reference</span>
+</span><span id="corpus_jer-865"><a href="#corpus_jer-865"><span class="linenos">865</span></a><span class="sd">            speaker boundary</span>
+</span><span id="corpus_jer-866"><a href="#corpus_jer-866"><span class="linenos">866</span></a><span class="sd">        skip_overlap: bool, if True, exclude regions where more than one</span>
+</span><span id="corpus_jer-867"><a href="#corpus_jer-867"><span class="linenos">867</span></a><span class="sd">            reference speaker is active</span>
+</span><span id="corpus_jer-868"><a href="#corpus_jer-868"><span class="linenos">868</span></a><span class="sd">        detailed: bool, if True, return a dict with corpus JER, total number of</span>
+</span><span id="corpus_jer-869"><a href="#corpus_jer-869"><span class="linenos">869</span></a><span class="sd">            reference speakers, and per-recording results</span>
+</span><span id="corpus_jer-870"><a href="#corpus_jer-870"><span class="linenos">870</span></a>
+</span><span id="corpus_jer-871"><a href="#corpus_jer-871"><span class="linenos">871</span></a><span class="sd">    Returns:</span>
+</span><span id="corpus_jer-872"><a href="#corpus_jer-872"><span class="linenos">872</span></a><span class="sd">        If `detailed=False`, a float number for the Corpus JER.</span>
+</span><span id="corpus_jer-873"><a href="#corpus_jer-873"><span class="linenos">873</span></a><span class="sd">        If `detailed=True`, a dict with keys:</span>
+</span><span id="corpus_jer-874"><a href="#corpus_jer-874"><span class="linenos">874</span></a><span class="sd">            - "jer": float, Corpus JER</span>
+</span><span id="corpus_jer-875"><a href="#corpus_jer-875"><span class="linenos">875</span></a><span class="sd">            - "num_ref_speakers": int, total reference speakers across corpus</span>
+</span><span id="corpus_jer-876"><a href="#corpus_jer-876"><span class="linenos">876</span></a><span class="sd">            - "per_recording": dict or list of per-recording detailed results</span>
+</span><span id="corpus_jer-877"><a href="#corpus_jer-877"><span class="linenos">877</span></a><span class="sd">    """</span>
+</span><span id="corpus_jer-878"><a href="#corpus_jer-878"><span class="linenos">878</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">detailed</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+</span><span id="corpus_jer-879"><a href="#corpus_jer-879"><span class="linenos">879</span></a>        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"detailed must be a boolean."</span><span class="p">)</span>
+</span><span id="corpus_jer-880"><a href="#corpus_jer-880"><span class="linenos">880</span></a>    <span class="n">pairs</span><span class="p">,</span> <span class="n">is_dict</span> <span class="o">=</span> <span class="n">_normalize_corpus_inputs</span><span class="p">(</span><span class="n">refs</span><span class="p">,</span> <span class="n">hyps</span><span class="p">)</span>
+</span><span id="corpus_jer-881"><a href="#corpus_jer-881"><span class="linenos">881</span></a>
+</span><span id="corpus_jer-882"><a href="#corpus_jer-882"><span class="linenos">882</span></a>    <span class="n">total_speaker_jer</span> <span class="o">=</span> <span class="mf">0.0</span>
+</span><span id="corpus_jer-883"><a href="#corpus_jer-883"><span class="linenos">883</span></a>    <span class="n">total_ref_speakers</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="corpus_jer-884"><a href="#corpus_jer-884"><span class="linenos">884</span></a>    <span class="n">per_recording</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="corpus_jer-885"><a href="#corpus_jer-885"><span class="linenos">885</span></a>
+</span><span id="corpus_jer-886"><a href="#corpus_jer-886"><span class="linenos">886</span></a>    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
+</span><span id="corpus_jer-887"><a href="#corpus_jer-887"><span class="linenos">887</span></a>        <span class="n">res</span> <span class="o">=</span> <span class="n">JER</span><span class="p">(</span>
+</span><span id="corpus_jer-888"><a href="#corpus_jer-888"><span class="linenos">888</span></a>            <span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">,</span> <span class="n">collar</span><span class="o">=</span><span class="n">collar</span><span class="p">,</span> <span class="n">skip_overlap</span><span class="o">=</span><span class="n">skip_overlap</span><span class="p">,</span> <span class="n">detailed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="corpus_jer-889"><a href="#corpus_jer-889"><span class="linenos">889</span></a>        <span class="n">total_speaker_jer</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">"speaker_jer"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+</span><span id="corpus_jer-890"><a href="#corpus_jer-890"><span class="linenos">890</span></a>        <span class="n">total_ref_speakers</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">"speaker_jer"</span><span class="p">])</span>
+</span><span id="corpus_jer-891"><a href="#corpus_jer-891"><span class="linenos">891</span></a>        <span class="n">per_recording</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span>
+</span><span id="corpus_jer-892"><a href="#corpus_jer-892"><span class="linenos">892</span></a>
+</span><span id="corpus_jer-893"><a href="#corpus_jer-893"><span class="linenos">893</span></a>    <span class="k">if</span> <span class="n">total_ref_speakers</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="corpus_jer-894"><a href="#corpus_jer-894"><span class="linenos">894</span></a>        <span class="n">jer_val</span> <span class="o">=</span> <span class="mf">0.0</span>
+</span><span id="corpus_jer-895"><a href="#corpus_jer-895"><span class="linenos">895</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="corpus_jer-896"><a href="#corpus_jer-896"><span class="linenos">896</span></a>        <span class="n">jer_val</span> <span class="o">=</span> <span class="n">total_speaker_jer</span> <span class="o">/</span> <span class="n">total_ref_speakers</span>
+</span><span id="corpus_jer-897"><a href="#corpus_jer-897"><span class="linenos">897</span></a>
+</span><span id="corpus_jer-898"><a href="#corpus_jer-898"><span class="linenos">898</span></a>    <span class="k">if</span> <span class="n">detailed</span><span class="p">:</span>
+</span><span id="corpus_jer-899"><a href="#corpus_jer-899"><span class="linenos">899</span></a>        <span class="k">return</span> <span class="p">{</span>
+</span><span id="corpus_jer-900"><a href="#corpus_jer-900"><span class="linenos">900</span></a>            <span class="s2">"jer"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">jer_val</span><span class="p">),</span>
+</span><span id="corpus_jer-901"><a href="#corpus_jer-901"><span class="linenos">901</span></a>            <span class="s2">"num_ref_speakers"</span><span class="p">:</span> <span class="n">total_ref_speakers</span><span class="p">,</span>
+</span><span id="corpus_jer-902"><a href="#corpus_jer-902"><span class="linenos">902</span></a>            <span class="s2">"per_recording"</span><span class="p">:</span> <span class="n">per_recording</span> <span class="k">if</span> <span class="n">is_dict</span> <span class="k">else</span> <span class="p">[</span>
+</span><span id="corpus_jer-903"><a href="#corpus_jer-903"><span class="linenos">903</span></a>                <span class="n">per_recording</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pairs</span><span class="p">))</span>
+</span><span id="corpus_jer-904"><a href="#corpus_jer-904"><span class="linenos">904</span></a>            <span class="p">],</span>
+</span><span id="corpus_jer-905"><a href="#corpus_jer-905"><span class="linenos">905</span></a>        <span class="p">}</span>
+</span><span id="corpus_jer-906"><a href="#corpus_jer-906"><span class="linenos">906</span></a>    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">jer_val</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -515,6 +696,277 @@ reference speakers in all recordings.</p>
         - "jer": float, Corpus JER
         - "num_ref_speakers": int, total reference speakers across corpus
         - "per_recording": dict or list of per-recording detailed results</p>
+</div>
+
+
+                </section>
+                <section id="corpus_wder">
+                            <input id="corpus_wder-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">corpus_wder</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">refs</span>, </span><span class="param"><span class="n">hyps</span>, </span><span class="param"><span class="n">detailed</span><span class="o">=</span><span class="kc">False</span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="corpus_wder-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#corpus_wder"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="corpus_wder-909"><a href="#corpus_wder-909"><span class="linenos">909</span></a><span class="k">def</span><span class="w"> </span><span class="nf">corpus_wder</span><span class="p">(</span><span class="n">refs</span><span class="p">,</span> <span class="n">hyps</span><span class="p">,</span> <span class="n">detailed</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="corpus_wder-910"><a href="#corpus_wder-910"><span class="linenos">910</span></a><span class="w">    </span><span class="sd">"""Compute micro-averaged Corpus Word Diarization Error Rate.</span>
+</span><span id="corpus_wder-911"><a href="#corpus_wder-911"><span class="linenos">911</span></a>
+</span><span id="corpus_wder-912"><a href="#corpus_wder-912"><span class="linenos">912</span></a><span class="sd">    Aggregates `wder_sub` and `wder_total` across all recordings in the corpus.</span>
+</span><span id="corpus_wder-913"><a href="#corpus_wder-913"><span class="linenos">913</span></a>
+</span><span id="corpus_wder-914"><a href="#corpus_wder-914"><span class="linenos">914</span></a><span class="sd">    Args:</span>
+</span><span id="corpus_wder-915"><a href="#corpus_wder-915"><span class="linenos">915</span></a><span class="sd">        refs: a dict mapping recording_id -&gt; ref word tuples, or a list of</span>
+</span><span id="corpus_wder-916"><a href="#corpus_wder-916"><span class="linenos">916</span></a><span class="sd">            ref word tuple lists</span>
+</span><span id="corpus_wder-917"><a href="#corpus_wder-917"><span class="linenos">917</span></a><span class="sd">        hyps: a dict mapping recording_id -&gt; hyp word tuples, or a list of</span>
+</span><span id="corpus_wder-918"><a href="#corpus_wder-918"><span class="linenos">918</span></a><span class="sd">            hyp word tuple lists (matching `refs`)</span>
+</span><span id="corpus_wder-919"><a href="#corpus_wder-919"><span class="linenos">919</span></a><span class="sd">        detailed: bool, if True, return a dict with corpus-level totals and</span>
+</span><span id="corpus_wder-920"><a href="#corpus_wder-920"><span class="linenos">920</span></a><span class="sd">            per-recording results</span>
+</span><span id="corpus_wder-921"><a href="#corpus_wder-921"><span class="linenos">921</span></a>
+</span><span id="corpus_wder-922"><a href="#corpus_wder-922"><span class="linenos">922</span></a><span class="sd">    Returns:</span>
+</span><span id="corpus_wder-923"><a href="#corpus_wder-923"><span class="linenos">923</span></a><span class="sd">        If `detailed=False`, a float number for the Corpus WDER.</span>
+</span><span id="corpus_wder-924"><a href="#corpus_wder-924"><span class="linenos">924</span></a><span class="sd">        If `detailed=True`, a dict with keys:</span>
+</span><span id="corpus_wder-925"><a href="#corpus_wder-925"><span class="linenos">925</span></a><span class="sd">            - "wder": float, Corpus WDER</span>
+</span><span id="corpus_wder-926"><a href="#corpus_wder-926"><span class="linenos">926</span></a><span class="sd">            - "wder_sub": int, total aligned words with wrong speaker</span>
+</span><span id="corpus_wder-927"><a href="#corpus_wder-927"><span class="linenos">927</span></a><span class="sd">            - "wder_correct": int, total aligned words with correct speaker</span>
+</span><span id="corpus_wder-928"><a href="#corpus_wder-928"><span class="linenos">928</span></a><span class="sd">            - "wder_total": int, total aligned words across corpus</span>
+</span><span id="corpus_wder-929"><a href="#corpus_wder-929"><span class="linenos">929</span></a><span class="sd">            - "wer": float, Corpus WER</span>
+</span><span id="corpus_wder-930"><a href="#corpus_wder-930"><span class="linenos">930</span></a><span class="sd">            - "wer_insert": int, total inserted words</span>
+</span><span id="corpus_wder-931"><a href="#corpus_wder-931"><span class="linenos">931</span></a><span class="sd">            - "wer_delete": int, total deleted words</span>
+</span><span id="corpus_wder-932"><a href="#corpus_wder-932"><span class="linenos">932</span></a><span class="sd">            - "wer_sub": int, total substituted words</span>
+</span><span id="corpus_wder-933"><a href="#corpus_wder-933"><span class="linenos">933</span></a><span class="sd">            - "wer_correct": int, total correct words</span>
+</span><span id="corpus_wder-934"><a href="#corpus_wder-934"><span class="linenos">934</span></a><span class="sd">            - "wer_total": int, total reference words</span>
+</span><span id="corpus_wder-935"><a href="#corpus_wder-935"><span class="linenos">935</span></a><span class="sd">            - "per_recording": dict or list of per-recording detailed results</span>
+</span><span id="corpus_wder-936"><a href="#corpus_wder-936"><span class="linenos">936</span></a><span class="sd">    """</span>
+</span><span id="corpus_wder-937"><a href="#corpus_wder-937"><span class="linenos">937</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">detailed</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+</span><span id="corpus_wder-938"><a href="#corpus_wder-938"><span class="linenos">938</span></a>        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"detailed must be a boolean."</span><span class="p">)</span>
+</span><span id="corpus_wder-939"><a href="#corpus_wder-939"><span class="linenos">939</span></a>    <span class="n">pairs</span><span class="p">,</span> <span class="n">is_dict</span> <span class="o">=</span> <span class="n">_normalize_corpus_inputs</span><span class="p">(</span><span class="n">refs</span><span class="p">,</span> <span class="n">hyps</span><span class="p">)</span>
+</span><span id="corpus_wder-940"><a href="#corpus_wder-940"><span class="linenos">940</span></a>
+</span><span id="corpus_wder-941"><a href="#corpus_wder-941"><span class="linenos">941</span></a>    <span class="n">total_wder_sub</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="corpus_wder-942"><a href="#corpus_wder-942"><span class="linenos">942</span></a>    <span class="n">total_wder_correct</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="corpus_wder-943"><a href="#corpus_wder-943"><span class="linenos">943</span></a>    <span class="n">total_wder_total</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="corpus_wder-944"><a href="#corpus_wder-944"><span class="linenos">944</span></a>    <span class="n">total_wer_insert</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="corpus_wder-945"><a href="#corpus_wder-945"><span class="linenos">945</span></a>    <span class="n">total_wer_delete</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="corpus_wder-946"><a href="#corpus_wder-946"><span class="linenos">946</span></a>    <span class="n">total_wer_sub</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="corpus_wder-947"><a href="#corpus_wder-947"><span class="linenos">947</span></a>    <span class="n">total_wer_correct</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="corpus_wder-948"><a href="#corpus_wder-948"><span class="linenos">948</span></a>    <span class="n">total_wer_total</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="corpus_wder-949"><a href="#corpus_wder-949"><span class="linenos">949</span></a>    <span class="n">per_recording</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="corpus_wder-950"><a href="#corpus_wder-950"><span class="linenos">950</span></a>
+</span><span id="corpus_wder-951"><a href="#corpus_wder-951"><span class="linenos">951</span></a>    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
+</span><span id="corpus_wder-952"><a href="#corpus_wder-952"><span class="linenos">952</span></a>        <span class="n">res</span> <span class="o">=</span> <span class="n">WDER</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">hyp</span><span class="p">,</span> <span class="n">detailed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="corpus_wder-953"><a href="#corpus_wder-953"><span class="linenos">953</span></a>        <span class="n">total_wder_sub</span> <span class="o">+=</span> <span class="n">res</span><span class="p">[</span><span class="s2">"wder_sub"</span><span class="p">]</span>
+</span><span id="corpus_wder-954"><a href="#corpus_wder-954"><span class="linenos">954</span></a>        <span class="n">total_wder_correct</span> <span class="o">+=</span> <span class="n">res</span><span class="p">[</span><span class="s2">"wder_correct"</span><span class="p">]</span>
+</span><span id="corpus_wder-955"><a href="#corpus_wder-955"><span class="linenos">955</span></a>        <span class="n">total_wder_total</span> <span class="o">+=</span> <span class="n">res</span><span class="p">[</span><span class="s2">"wder_total"</span><span class="p">]</span>
+</span><span id="corpus_wder-956"><a href="#corpus_wder-956"><span class="linenos">956</span></a>        <span class="n">total_wer_insert</span> <span class="o">+=</span> <span class="n">res</span><span class="p">[</span><span class="s2">"wer_insert"</span><span class="p">]</span>
+</span><span id="corpus_wder-957"><a href="#corpus_wder-957"><span class="linenos">957</span></a>        <span class="n">total_wer_delete</span> <span class="o">+=</span> <span class="n">res</span><span class="p">[</span><span class="s2">"wer_delete"</span><span class="p">]</span>
+</span><span id="corpus_wder-958"><a href="#corpus_wder-958"><span class="linenos">958</span></a>        <span class="n">total_wer_sub</span> <span class="o">+=</span> <span class="n">res</span><span class="p">[</span><span class="s2">"wer_sub"</span><span class="p">]</span>
+</span><span id="corpus_wder-959"><a href="#corpus_wder-959"><span class="linenos">959</span></a>        <span class="n">total_wer_correct</span> <span class="o">+=</span> <span class="n">res</span><span class="p">[</span><span class="s2">"wer_correct"</span><span class="p">]</span>
+</span><span id="corpus_wder-960"><a href="#corpus_wder-960"><span class="linenos">960</span></a>        <span class="n">total_wer_total</span> <span class="o">+=</span> <span class="n">res</span><span class="p">[</span><span class="s2">"wer_total"</span><span class="p">]</span>
+</span><span id="corpus_wder-961"><a href="#corpus_wder-961"><span class="linenos">961</span></a>        <span class="n">per_recording</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span>
+</span><span id="corpus_wder-962"><a href="#corpus_wder-962"><span class="linenos">962</span></a>
+</span><span id="corpus_wder-963"><a href="#corpus_wder-963"><span class="linenos">963</span></a>    <span class="n">wder_val</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="corpus_wder-964"><a href="#corpus_wder-964"><span class="linenos">964</span></a>        <span class="mf">0.0</span> <span class="k">if</span> <span class="n">total_wder_total</span> <span class="o">==</span> <span class="mi">0</span>
+</span><span id="corpus_wder-965"><a href="#corpus_wder-965"><span class="linenos">965</span></a>        <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">total_wder_sub</span> <span class="o">/</span> <span class="n">total_wder_total</span><span class="p">)</span>
+</span><span id="corpus_wder-966"><a href="#corpus_wder-966"><span class="linenos">966</span></a>    <span class="p">)</span>
+</span><span id="corpus_wder-967"><a href="#corpus_wder-967"><span class="linenos">967</span></a>    <span class="n">wer_val</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="corpus_wder-968"><a href="#corpus_wder-968"><span class="linenos">968</span></a>        <span class="mf">0.0</span> <span class="k">if</span> <span class="n">total_wer_total</span> <span class="o">==</span> <span class="mi">0</span>
+</span><span id="corpus_wder-969"><a href="#corpus_wder-969"><span class="linenos">969</span></a>        <span class="k">else</span> <span class="nb">float</span><span class="p">(</span>
+</span><span id="corpus_wder-970"><a href="#corpus_wder-970"><span class="linenos">970</span></a>            <span class="p">(</span><span class="n">total_wer_insert</span> <span class="o">+</span> <span class="n">total_wer_delete</span> <span class="o">+</span> <span class="n">total_wer_sub</span><span class="p">)</span>
+</span><span id="corpus_wder-971"><a href="#corpus_wder-971"><span class="linenos">971</span></a>            <span class="o">/</span> <span class="n">total_wer_total</span>
+</span><span id="corpus_wder-972"><a href="#corpus_wder-972"><span class="linenos">972</span></a>        <span class="p">)</span>
+</span><span id="corpus_wder-973"><a href="#corpus_wder-973"><span class="linenos">973</span></a>    <span class="p">)</span>
+</span><span id="corpus_wder-974"><a href="#corpus_wder-974"><span class="linenos">974</span></a>
+</span><span id="corpus_wder-975"><a href="#corpus_wder-975"><span class="linenos">975</span></a>    <span class="k">if</span> <span class="n">detailed</span><span class="p">:</span>
+</span><span id="corpus_wder-976"><a href="#corpus_wder-976"><span class="linenos">976</span></a>        <span class="k">return</span> <span class="p">{</span>
+</span><span id="corpus_wder-977"><a href="#corpus_wder-977"><span class="linenos">977</span></a>            <span class="s2">"wder"</span><span class="p">:</span> <span class="n">wder_val</span><span class="p">,</span>
+</span><span id="corpus_wder-978"><a href="#corpus_wder-978"><span class="linenos">978</span></a>            <span class="s2">"wder_sub"</span><span class="p">:</span> <span class="n">total_wder_sub</span><span class="p">,</span>
+</span><span id="corpus_wder-979"><a href="#corpus_wder-979"><span class="linenos">979</span></a>            <span class="s2">"wder_correct"</span><span class="p">:</span> <span class="n">total_wder_correct</span><span class="p">,</span>
+</span><span id="corpus_wder-980"><a href="#corpus_wder-980"><span class="linenos">980</span></a>            <span class="s2">"wder_total"</span><span class="p">:</span> <span class="n">total_wder_total</span><span class="p">,</span>
+</span><span id="corpus_wder-981"><a href="#corpus_wder-981"><span class="linenos">981</span></a>            <span class="s2">"wer"</span><span class="p">:</span> <span class="n">wer_val</span><span class="p">,</span>
+</span><span id="corpus_wder-982"><a href="#corpus_wder-982"><span class="linenos">982</span></a>            <span class="s2">"wer_insert"</span><span class="p">:</span> <span class="n">total_wer_insert</span><span class="p">,</span>
+</span><span id="corpus_wder-983"><a href="#corpus_wder-983"><span class="linenos">983</span></a>            <span class="s2">"wer_delete"</span><span class="p">:</span> <span class="n">total_wer_delete</span><span class="p">,</span>
+</span><span id="corpus_wder-984"><a href="#corpus_wder-984"><span class="linenos">984</span></a>            <span class="s2">"wer_sub"</span><span class="p">:</span> <span class="n">total_wer_sub</span><span class="p">,</span>
+</span><span id="corpus_wder-985"><a href="#corpus_wder-985"><span class="linenos">985</span></a>            <span class="s2">"wer_correct"</span><span class="p">:</span> <span class="n">total_wer_correct</span><span class="p">,</span>
+</span><span id="corpus_wder-986"><a href="#corpus_wder-986"><span class="linenos">986</span></a>            <span class="s2">"wer_total"</span><span class="p">:</span> <span class="n">total_wer_total</span><span class="p">,</span>
+</span><span id="corpus_wder-987"><a href="#corpus_wder-987"><span class="linenos">987</span></a>            <span class="s2">"per_recording"</span><span class="p">:</span> <span class="n">per_recording</span> <span class="k">if</span> <span class="n">is_dict</span> <span class="k">else</span> <span class="p">[</span>
+</span><span id="corpus_wder-988"><a href="#corpus_wder-988"><span class="linenos">988</span></a>                <span class="n">per_recording</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pairs</span><span class="p">))</span>
+</span><span id="corpus_wder-989"><a href="#corpus_wder-989"><span class="linenos">989</span></a>            <span class="p">],</span>
+</span><span id="corpus_wder-990"><a href="#corpus_wder-990"><span class="linenos">990</span></a>        <span class="p">}</span>
+</span><span id="corpus_wder-991"><a href="#corpus_wder-991"><span class="linenos">991</span></a>    <span class="k">return</span> <span class="n">wder_val</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Compute micro-averaged Corpus Word Diarization Error Rate.</p>
+
+<p>Aggregates <code>wder_sub</code> and <code>wder_total</code> across all recordings in the corpus.</p>
+
+<p>Args:
+    refs: a dict mapping recording_id -> ref word tuples, or a list of
+        ref word tuple lists
+    hyps: a dict mapping recording_id -> hyp word tuples, or a list of
+        hyp word tuple lists (matching <code>refs</code>)
+    detailed: bool, if True, return a dict with corpus-level totals and
+        per-recording results</p>
+
+<p>Returns:
+    If <code>detailed=False</code>, a float number for the Corpus WDER.
+    If <code>detailed=True</code>, a dict with keys:
+        - "wder": float, Corpus WDER
+        - "wder_sub": int, total aligned words with wrong speaker
+        - "wder_correct": int, total aligned words with correct speaker
+        - "wder_total": int, total aligned words across corpus
+        - "wer": float, Corpus WER
+        - "wer_insert": int, total inserted words
+        - "wer_delete": int, total deleted words
+        - "wer_sub": int, total substituted words
+        - "wer_correct": int, total correct words
+        - "wer_total": int, total reference words
+        - "per_recording": dict or list of per-recording detailed results</p>
+</div>
+
+
+                </section>
+                <section id="load_rttm">
+                            <input id="load_rttm-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">load_rttm</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">rttm_source</span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="load_rttm-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#load_rttm"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="load_rttm-994"><a href="#load_rttm-994"><span class="linenos"> 994</span></a><span class="k">def</span><span class="w"> </span><span class="nf">load_rttm</span><span class="p">(</span><span class="n">rttm_source</span><span class="p">):</span>
+</span><span id="load_rttm-995"><a href="#load_rttm-995"><span class="linenos"> 995</span></a><span class="w">    </span><span class="sd">"""Load diarization segments from a NIST RTTM file or line iterable.</span>
+</span><span id="load_rttm-996"><a href="#load_rttm-996"><span class="linenos"> 996</span></a>
+</span><span id="load_rttm-997"><a href="#load_rttm-997"><span class="linenos"> 997</span></a><span class="sd">    Each `SPEAKER` line in an RTTM file has the format:</span>
+</span><span id="load_rttm-998"><a href="#load_rttm-998"><span class="linenos"> 998</span></a><span class="sd">        SPEAKER &lt;rec_id&gt; &lt;channel&gt; &lt;start&gt; &lt;duration&gt; &lt;NA&gt; &lt;NA&gt; &lt;spk&gt; &lt;NA&gt; &lt;NA&gt;</span>
+</span><span id="load_rttm-999"><a href="#load_rttm-999"><span class="linenos"> 999</span></a>
+</span><span id="load_rttm-1000"><a href="#load_rttm-1000"><span class="linenos">1000</span></a><span class="sd">    Args:</span>
+</span><span id="load_rttm-1001"><a href="#load_rttm-1001"><span class="linenos">1001</span></a><span class="sd">        rttm_source: path to an RTTM file (str or os.PathLike) or an iterable</span>
+</span><span id="load_rttm-1002"><a href="#load_rttm-1002"><span class="linenos">1002</span></a><span class="sd">            of RTTM lines (such as an open file object)</span>
+</span><span id="load_rttm-1003"><a href="#load_rttm-1003"><span class="linenos">1003</span></a>
+</span><span id="load_rttm-1004"><a href="#load_rttm-1004"><span class="linenos">1004</span></a><span class="sd">    Returns:</span>
+</span><span id="load_rttm-1005"><a href="#load_rttm-1005"><span class="linenos">1005</span></a><span class="sd">        a dict mapping `recording_id` (str) to a list of</span>
+</span><span id="load_rttm-1006"><a href="#load_rttm-1006"><span class="linenos">1006</span></a><span class="sd">        `(speaker, start, end)` tuples</span>
+</span><span id="load_rttm-1007"><a href="#load_rttm-1007"><span class="linenos">1007</span></a><span class="sd">    """</span>
+</span><span id="load_rttm-1008"><a href="#load_rttm-1008"><span class="linenos">1008</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rttm_source</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">)):</span>
+</span><span id="load_rttm-1009"><a href="#load_rttm-1009"><span class="linenos">1009</span></a>        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">rttm_source</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span id="load_rttm-1010"><a href="#load_rttm-1010"><span class="linenos">1010</span></a>            <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+</span><span id="load_rttm-1011"><a href="#load_rttm-1011"><span class="linenos">1011</span></a>    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">rttm_source</span><span class="p">,</span> <span class="s2">"__iter__"</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
+</span><span id="load_rttm-1012"><a href="#load_rttm-1012"><span class="linenos">1012</span></a>            <span class="n">rttm_source</span><span class="p">,</span> <span class="p">(</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">bytearray</span><span class="p">)):</span>
+</span><span id="load_rttm-1013"><a href="#load_rttm-1013"><span class="linenos">1013</span></a>        <span class="n">lines</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">rttm_source</span><span class="p">)</span>
+</span><span id="load_rttm-1014"><a href="#load_rttm-1014"><span class="linenos">1014</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="load_rttm-1015"><a href="#load_rttm-1015"><span class="linenos">1015</span></a>        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+</span><span id="load_rttm-1016"><a href="#load_rttm-1016"><span class="linenos">1016</span></a>            <span class="s2">"rttm_source must be a file path or an iterable of lines."</span><span class="p">)</span>
+</span><span id="load_rttm-1017"><a href="#load_rttm-1017"><span class="linenos">1017</span></a>
+</span><span id="load_rttm-1018"><a href="#load_rttm-1018"><span class="linenos">1018</span></a>    <span class="n">recordings</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="load_rttm-1019"><a href="#load_rttm-1019"><span class="linenos">1019</span></a>    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+</span><span id="load_rttm-1020"><a href="#load_rttm-1020"><span class="linenos">1020</span></a>        <span class="n">stripped</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span id="load_rttm-1021"><a href="#load_rttm-1021"><span class="linenos">1021</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">stripped</span> <span class="ow">or</span> <span class="n">stripped</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">"#"</span><span class="p">,</span> <span class="s2">";"</span><span class="p">)):</span>
+</span><span id="load_rttm-1022"><a href="#load_rttm-1022"><span class="linenos">1022</span></a>            <span class="k">continue</span>
+</span><span id="load_rttm-1023"><a href="#load_rttm-1023"><span class="linenos">1023</span></a>        <span class="n">parts</span> <span class="o">=</span> <span class="n">stripped</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+</span><span id="load_rttm-1024"><a href="#load_rttm-1024"><span class="linenos">1024</span></a>        <span class="k">if</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">"SPEAKER"</span><span class="p">:</span>
+</span><span id="load_rttm-1025"><a href="#load_rttm-1025"><span class="linenos">1025</span></a>            <span class="k">continue</span>
+</span><span id="load_rttm-1026"><a href="#load_rttm-1026"><span class="linenos">1026</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">:</span>
+</span><span id="load_rttm-1027"><a href="#load_rttm-1027"><span class="linenos">1027</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid RTTM SPEAKER line: </span><span class="si">{</span><span class="n">stripped</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="load_rttm-1028"><a href="#load_rttm-1028"><span class="linenos">1028</span></a>        <span class="n">rec_id</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span><span id="load_rttm-1029"><a href="#load_rttm-1029"><span class="linenos">1029</span></a>        <span class="n">start</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+</span><span id="load_rttm-1030"><a href="#load_rttm-1030"><span class="linenos">1030</span></a>        <span class="n">duration</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+</span><span id="load_rttm-1031"><a href="#load_rttm-1031"><span class="linenos">1031</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">start</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span> <span class="ow">or</span> <span class="n">duration</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="load_rttm-1032"><a href="#load_rttm-1032"><span class="linenos">1032</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="load_rttm-1033"><a href="#load_rttm-1033"><span class="linenos">1033</span></a>                <span class="sa">f</span><span class="s2">"Invalid start or duration in RTTM line: </span><span class="si">{</span><span class="n">stripped</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="load_rttm-1034"><a href="#load_rttm-1034"><span class="linenos">1034</span></a>        <span class="n">end</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="n">duration</span>
+</span><span id="load_rttm-1035"><a href="#load_rttm-1035"><span class="linenos">1035</span></a>        <span class="n">speaker</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+</span><span id="load_rttm-1036"><a href="#load_rttm-1036"><span class="linenos">1036</span></a>        <span class="n">recordings</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">rec_id</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">speaker</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">))</span>
+</span><span id="load_rttm-1037"><a href="#load_rttm-1037"><span class="linenos">1037</span></a>
+</span><span id="load_rttm-1038"><a href="#load_rttm-1038"><span class="linenos">1038</span></a>    <span class="k">return</span> <span class="n">recordings</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Load diarization segments from a NIST RTTM file or line iterable.</p>
+
+<p>Each <code>SPEAKER</code> line in an RTTM file has the format:
+    SPEAKER <rec_id> <channel> <start> <duration> <NA> <NA> <spk> <NA> <NA></p>
+
+<p>Args:
+    rttm_source: path to an RTTM file (str or os.PathLike) or an iterable
+        of RTTM lines (such as an open file object)</p>
+
+<p>Returns:
+    a dict mapping <code>recording_id</code> (str) to a list of
+    <code>(speaker, start, end)</code> tuples</p>
+</div>
+
+
+                </section>
+                <section id="dump_rttm">
+                            <input id="dump_rttm-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">dump_rttm</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">data</span>, </span><span class="param"><span class="n">rttm_target</span>, </span><span class="param"><span class="n">recording_id</span><span class="o">=</span><span class="s1">'recording'</span>, </span><span class="param"><span class="n">channel</span><span class="o">=</span><span class="s1">'1'</span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="dump_rttm-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#dump_rttm"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="dump_rttm-1041"><a href="#dump_rttm-1041"><span class="linenos">1041</span></a><span class="k">def</span><span class="w"> </span><span class="nf">dump_rttm</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rttm_target</span><span class="p">,</span> <span class="n">recording_id</span><span class="o">=</span><span class="s2">"recording"</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="s2">"1"</span><span class="p">):</span>
+</span><span id="dump_rttm-1042"><a href="#dump_rttm-1042"><span class="linenos">1042</span></a><span class="w">    </span><span class="sd">"""Write diarization segments to a NIST RTTM file or writable stream.</span>
+</span><span id="dump_rttm-1043"><a href="#dump_rttm-1043"><span class="linenos">1043</span></a>
+</span><span id="dump_rttm-1044"><a href="#dump_rttm-1044"><span class="linenos">1044</span></a><span class="sd">    Args:</span>
+</span><span id="dump_rttm-1045"><a href="#dump_rttm-1045"><span class="linenos">1045</span></a><span class="sd">        data: either a dict mapping `recording_id -&gt; list of (speaker, start,</span>
+</span><span id="dump_rttm-1046"><a href="#dump_rttm-1046"><span class="linenos">1046</span></a><span class="sd">            end)` tuples, or a single list of `(speaker, start, end)` tuples</span>
+</span><span id="dump_rttm-1047"><a href="#dump_rttm-1047"><span class="linenos">1047</span></a><span class="sd">        rttm_target: output file path (str or os.PathLike) or a writable</span>
+</span><span id="dump_rttm-1048"><a href="#dump_rttm-1048"><span class="linenos">1048</span></a><span class="sd">            file-like object</span>
+</span><span id="dump_rttm-1049"><a href="#dump_rttm-1049"><span class="linenos">1049</span></a><span class="sd">        recording_id: recording ID to use when `data` is a single list of</span>
+</span><span id="dump_rttm-1050"><a href="#dump_rttm-1050"><span class="linenos">1050</span></a><span class="sd">            segments (default: "recording")</span>
+</span><span id="dump_rttm-1051"><a href="#dump_rttm-1051"><span class="linenos">1051</span></a><span class="sd">        channel: channel ID field in RTTM output (default: "1")</span>
+</span><span id="dump_rttm-1052"><a href="#dump_rttm-1052"><span class="linenos">1052</span></a><span class="sd">    """</span>
+</span><span id="dump_rttm-1053"><a href="#dump_rttm-1053"><span class="linenos">1053</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+</span><span id="dump_rttm-1054"><a href="#dump_rttm-1054"><span class="linenos">1054</span></a>        <span class="n">check_input</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span id="dump_rttm-1055"><a href="#dump_rttm-1055"><span class="linenos">1055</span></a>        <span class="n">recordings</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">recording_id</span><span class="p">):</span> <span class="n">data</span><span class="p">}</span>
+</span><span id="dump_rttm-1056"><a href="#dump_rttm-1056"><span class="linenos">1056</span></a>    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="dump_rttm-1057"><a href="#dump_rttm-1057"><span class="linenos">1057</span></a>        <span class="n">recordings</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="dump_rttm-1058"><a href="#dump_rttm-1058"><span class="linenos">1058</span></a>        <span class="k">for</span> <span class="n">rec_id</span><span class="p">,</span> <span class="n">segments</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="dump_rttm-1059"><a href="#dump_rttm-1059"><span class="linenos">1059</span></a>            <span class="n">check_input</span><span class="p">(</span><span class="n">segments</span><span class="p">)</span>
+</span><span id="dump_rttm-1060"><a href="#dump_rttm-1060"><span class="linenos">1060</span></a>            <span class="n">recordings</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">rec_id</span><span class="p">)]</span> <span class="o">=</span> <span class="n">segments</span>
+</span><span id="dump_rttm-1061"><a href="#dump_rttm-1061"><span class="linenos">1061</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="dump_rttm-1062"><a href="#dump_rttm-1062"><span class="linenos">1062</span></a>        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"data must be a list of segments or a dict."</span><span class="p">)</span>
+</span><span id="dump_rttm-1063"><a href="#dump_rttm-1063"><span class="linenos">1063</span></a>
+</span><span id="dump_rttm-1064"><a href="#dump_rttm-1064"><span class="linenos">1064</span></a>    <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="dump_rttm-1065"><a href="#dump_rttm-1065"><span class="linenos">1065</span></a>    <span class="k">for</span> <span class="n">rec_id</span><span class="p">,</span> <span class="n">segments</span> <span class="ow">in</span> <span class="n">recordings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="dump_rttm-1066"><a href="#dump_rttm-1066"><span class="linenos">1066</span></a>        <span class="k">for</span> <span class="n">speaker</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">segments</span><span class="p">:</span>
+</span><span id="dump_rttm-1067"><a href="#dump_rttm-1067"><span class="linenos">1067</span></a>            <span class="n">start_f</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+</span><span id="dump_rttm-1068"><a href="#dump_rttm-1068"><span class="linenos">1068</span></a>            <span class="n">dur_f</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">end</span><span class="p">)</span> <span class="o">-</span> <span class="n">start_f</span>
+</span><span id="dump_rttm-1069"><a href="#dump_rttm-1069"><span class="linenos">1069</span></a>            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+</span><span id="dump_rttm-1070"><a href="#dump_rttm-1070"><span class="linenos">1070</span></a>                <span class="sa">f</span><span class="s2">"SPEAKER </span><span class="si">{</span><span class="n">rec_id</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">channel</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">start_f</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">dur_f</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> "</span>
+</span><span id="dump_rttm-1071"><a href="#dump_rttm-1071"><span class="linenos">1071</span></a>                <span class="sa">f</span><span class="s2">"&lt;NA&gt; &lt;NA&gt; </span><span class="si">{</span><span class="n">speaker</span><span class="si">}</span><span class="s2"> &lt;NA&gt; &lt;NA&gt;</span><span class="se">\n</span><span class="s2">"</span>
+</span><span id="dump_rttm-1072"><a href="#dump_rttm-1072"><span class="linenos">1072</span></a>            <span class="p">)</span>
+</span><span id="dump_rttm-1073"><a href="#dump_rttm-1073"><span class="linenos">1073</span></a>
+</span><span id="dump_rttm-1074"><a href="#dump_rttm-1074"><span class="linenos">1074</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rttm_target</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">)):</span>
+</span><span id="dump_rttm-1075"><a href="#dump_rttm-1075"><span class="linenos">1075</span></a>        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">rttm_target</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span id="dump_rttm-1076"><a href="#dump_rttm-1076"><span class="linenos">1076</span></a>            <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+</span><span id="dump_rttm-1077"><a href="#dump_rttm-1077"><span class="linenos">1077</span></a>    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">rttm_target</span><span class="p">,</span> <span class="s2">"write"</span><span class="p">):</span>
+</span><span id="dump_rttm-1078"><a href="#dump_rttm-1078"><span class="linenos">1078</span></a>        <span class="n">rttm_target</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+</span><span id="dump_rttm-1079"><a href="#dump_rttm-1079"><span class="linenos">1079</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="dump_rttm-1080"><a href="#dump_rttm-1080"><span class="linenos">1080</span></a>        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+</span><span id="dump_rttm-1081"><a href="#dump_rttm-1081"><span class="linenos">1081</span></a>            <span class="s2">"rttm_target must be a file path or writable file-like object."</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Write diarization segments to a NIST RTTM file or writable stream.</p>
+
+<p>Args:
+    data: either a dict mapping <code>recording_id -&gt; list of (speaker, start,
+        end)</code> tuples, or a single list of <code>(speaker, start, end)</code> tuples
+    rttm_target: output file path (str or os.PathLike) or a writable
+        file-like object
+    recording_id: recording ID to use when <code>data</code> is a single list of
+        segments (default: "recording")
+    channel: channel ID field in RTTM output (default: "1")</p>
 </div>
 
 

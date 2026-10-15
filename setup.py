@@ -2,7 +2,7 @@
 
 import setuptools
 
-VERSION = "0.0.6"
+VERSION = "0.0.7"
 
 with open("README.md", "r") as file_object:
     LONG_DESCRIPTION = file_object.read()
@@ -21,6 +21,11 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/wq2012/SimpleDER",
     packages=setuptools.find_packages(),
+    entry_points={
+        "console_scripts": [
+            "simpleder=simpleder.der:main",
+        ],
+    },
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: Apache Software License",

@@ -1,5 +1,8 @@
-import numpy as np
+import io
+import os
+import tempfile
 import unittest
+import numpy as np
 
 import simpleder
 from simpleder import der
@@ -358,21 +361,12 @@ class TestDER(unittest.TestCase):
         self.assertEqual(0.0, der.DER(ref, hyp, collar=0.1))
 
     def test_collar_same_speaker_contiguous_not_excluded(self):
-        # Speaker A speaks continuously from 0.0 to 2.0 (represented as two
-        # contiguous segments). With collar=0.25, only 0.0 and 2.0 are
-        # boundaries (not 1.0). Scored region is [0.25, 1.75] (length 1.5).
-        # Hypothesis misses [0.9, 1.1] (length 0.2 inside scored region).
         ref = [("A", 0.0, 1.0), ("A", 1.0, 2.0)]
         hyp = [("1", 0.0, 0.9), ("1", 1.1, 2.0)]
         self.assertAlmostEqual(
             0.2 / 1.5, der.DER(ref, hyp, collar=0.25), delta=0.0001)
 
     def test_skip_overlap(self):
-        # Ref: A(0-2), B(1-3). Overlap is [1, 2].
-        # With skip_overlap=True, scored regions are [0, 1] (A) and [2, 3] (B),
-        # total ref_length = 2.0.
-        # Hyp has 1(0-2): after removing [1, 2], hyp has 1(0-1).
-        # Match = 1.0 (A->1), Miss = 1.0 (B on [2, 3]), DER = 1.0 / 2.0 = 0.5.
         ref = [("A", 0.0, 2.0), ("B", 1.0, 3.0)]
         hyp = [("1", 0.0, 2.0)]
         details = der.DER(ref, hyp, skip_overlap=True, detailed=True)
@@ -381,7 +375,6 @@ class TestDER(unittest.TestCase):
         self.assertAlmostEqual(0.0, details["false_alarm"], delta=0.0001)
         self.assertAlmostEqual(0.0, details["confusion"], delta=0.0001)
         self.assertAlmostEqual(2.0, details["ref_length"], delta=0.0001)
-        # Also test skip_overlap=True when there is no overlap in ref
         self.assertEqual(
             0.0, der.DER([("A", 0.0, 1.0)], [("1", 0.0, 1.0)],
                          skip_overlap=True))
@@ -469,17 +462,11 @@ class TestJER(unittest.TestCase):
         self.assertEqual({}, details["speaker_mapping"])
 
     def test_single_speaker_miss_and_fa(self):
-        # Ref A: [0.0, 1.0], Hyp 1: [0.5, 1.5]
-        # Intersection = 0.5, Union = 1.5 -> Jaccard = 1/3 -> JER = 2/3.
         ref = [("A", 0.0, 1.0)]
         hyp = [("1", 0.5, 1.5)]
         self.assertAlmostEqual(2.0 / 3.0, simpleder.JER(ref, hyp), delta=1e-6)
 
     def test_jer_vs_der_optimal_mapping_difference(self):
-        # Ref A: [0, 10] (dur 10), Ref B: [10, 11] (dur 1)
-        # Hyp 1: [8, 11] (dur 3)
-        # J(A, 1) = 2 / 11; J(B, 1) = 1 / 3.
-        # Since 1/3 > 2/11, JER maps B -> 1, giving JER = (1 + 2/3) / 2 = 5/6.
         ref = [("A", 0.0, 10.0), ("B", 10.0, 11.0)]
         hyp = [("1", 8.0, 11.0)]
         details = simpleder.JER(ref, hyp, detailed=True)
@@ -494,14 +481,109 @@ class TestJER(unittest.TestCase):
             simpleder.JER([("A", 0.0, 1.0)], [("1", 0.0, 1.0)], detailed=1)
 
 
+class TestWDER(unittest.TestCase):
+    """Tests for WDER, check_word_input, normalize_text, and corpus_wder."""
+
+    def test_word_tuples_and_phrase_tuples(self):
+        ref_words = [
+            ("A", "hello"),
+            ("A", "world"),
+            ("B", "how"),
+            ("B", "are"),
+            ("B", "you"),
+        ]
+        hyp_words = [
+            ("1", "hello"),
+            ("2", "world"),
+            ("2", "how"),
+            ("2", "are"),
+            ("2", "you"),
+        ]
+        # 5 aligned words; A->1 (1 word), B->2 (3 words); "world" is confused.
+        # WDER = 1 / 5 = 0.2.
+        self.assertAlmostEqual(0.2, simpleder.WDER(ref_words, hyp_words))
+
+        # Phrase-level tuples with punctuation should produce the same result.
+        ref_phrases = [("A", "Hello, world!"), ("B", "How are you?")]
+        hyp_phrases = [("1", "hello"), ("2", "world, how are you.")]
+        details = simpleder.WDER(ref_phrases, hyp_phrases, detailed=True)
+        self.assertAlmostEqual(0.2, details["wder"])
+        self.assertEqual(1, details["wder_sub"])
+        self.assertEqual(4, details["wder_correct"])
+        self.assertEqual(5, details["wder_total"])
+        self.assertEqual(0.0, details["wer"])
+        self.assertEqual({"A": "1", "B": "2"}, details["speaker_mapping"])
+
+    def test_wder_with_asr_ins_del_sub(self):
+        # Ref: A: "good morning", B: "everyone here" (4 words)
+        # Hyp: 1: "good evening", 2: "everyone right here"
+        # Alignment:
+        #   "good" == "good" (correct, A vs 1)
+        #   "morning" -> "evening" (sub, A vs 1)
+        #   "everyone" == "everyone" (correct, B vs 2)
+        #   (insert "right", hyp spk 2 - not in aligned_spk_pairs)
+        #   "here" == "here" (correct, B vs 2)
+        # Plus let's delete a word from ref:
+        ref = [("A", "very good morning"), ("B", "everyone here")]
+        hyp = [("1", "good evening"), ("2", "everyone right here")]
+        details = simpleder.WDER(ref, hyp, detailed=True)
+        # Aligned pairs: good(A,1), morning->evening(A,1), everyone(B,2),
+        # here(B,2) -> all 4 aligned words have consistent speaker mapping!
+        self.assertEqual(0.0, details["wder"])
+        self.assertEqual(4, details["wder_total"])
+        self.assertEqual(1, details["wer_insert"])
+        self.assertEqual(1, details["wer_delete"])
+        self.assertEqual(1, details["wer_sub"])
+        self.assertEqual(3, details["wer_correct"])
+        self.assertEqual(5, details["wer_total"])
+        self.assertAlmostEqual(3.0 / 5.0, details["wer"])
+
+    def test_wder_empty_and_standalone_punctuation(self):
+        self.assertEqual(0.0, simpleder.WDER([], []))
+        self.assertEqual(0.0, simpleder.WDER([("A", "hello")], []))
+        # Standalone punctuation token "..." stays 1 token in normalize_text
+        self.assertEqual("...", der.normalize_text("..."))
+
+    def test_wder_input_validation(self):
+        with self.assertRaises(TypeError):
+            der.check_word_input("not a list")
+        with self.assertRaises(TypeError):
+            der.check_word_input([["A", "hello"]])
+        with self.assertRaises(TypeError):
+            der.check_word_input([("A", "hello", 1.0)])
+        with self.assertRaises(TypeError):
+            der.check_word_input([(1, "hello")])
+        with self.assertRaises(TypeError):
+            der.check_word_input([("A", 123)])
+        with self.assertRaises(TypeError):
+            simpleder.WDER([], [], detailed="yes")
+
+    def test_corpus_wder(self):
+        refs = {
+            "utt1": [("A", "hello world"), ("B", "how are you")],
+            "utt2": [("A", "good morning"), ("B", "thank you")],
+        }
+        hyps = {
+            "utt1": [("1", "hello"), ("2", "world how are you")],
+            "utt2": [("1", "good morning"), ("2", "thank you")],
+        }
+        # utt1 has 1 error out of 5 words; utt2 has 0 errors out of 4 words.
+        # Corpus WDER = 1 / 9.
+        self.assertAlmostEqual(1.0 / 9.0, simpleder.corpus_wder(refs, hyps))
+        details = simpleder.corpus_wder(refs, hyps, detailed=True)
+        self.assertAlmostEqual(1.0 / 9.0, details["wder"])
+        self.assertEqual(1, details["wder_sub"])
+        self.assertEqual(8, details["wder_correct"])
+        self.assertEqual(9, details["wder_total"])
+        self.assertEqual(0.0, simpleder.corpus_wder([], []))
+        with self.assertRaises(TypeError):
+            simpleder.corpus_wder([], [], detailed="yes")
+
+
 class TestCorpusEvaluation(unittest.TestCase):
     """Tests for corpus_der and corpus_jer."""
 
     def test_corpus_der_dict_micro_average(self):
-        # Rec 1: ref length 1.0, DER = 1.0 (error = 1.0)
-        # Rec 2: ref length 9.0, DER = 0.0 (error = 0.0)
-        # Micro-averaged Corpus DER = (1.0 + 0.0) / (1.0 + 9.0) = 0.1
-        # (whereas unweighted mean would be 0.5).
         refs = {
             "rec1": [("A", 0.0, 1.0)],
             "rec2": [("B", 0.0, 9.0)],
@@ -528,9 +610,6 @@ class TestCorpusEvaluation(unittest.TestCase):
         self.assertEqual(0.0, simpleder.corpus_der([], []))
 
     def test_corpus_jer_speaker_weighted(self):
-        # Rec 1: 1 speaker with JER = 1.0
-        # Rec 2: 3 speakers all with JER = 0.0
-        # Corpus JER across all 4 ref speakers = 1.0 / 4 = 0.25.
         refs = [
             [("A", 0.0, 1.0)],
             [("B", 0.0, 1.0), ("C", 1.0, 2.0), ("D", 2.0, 3.0)],
@@ -557,6 +636,56 @@ class TestCorpusEvaluation(unittest.TestCase):
             simpleder.corpus_der([], [], detailed="yes")
         with self.assertRaises(TypeError):
             simpleder.corpus_jer([], [], detailed="yes")
+
+
+class TestRTTMAndCLI(unittest.TestCase):
+    """Tests for load_rttm, dump_rttm, and the command-line interface."""
+
+    def test_dump_and_load_rttm_stream_and_file(self):
+        import simpleder.__main__  # noqa: F401
+        ref_segments = [("A", 0.0, 1.0), ("B", 1.0, 2.5)]
+        buf = io.StringIO()
+        simpleder.dump_rttm(ref_segments, buf, recording_id="rec1")
+        buf.write(
+            "# comment line\n\nSPKR-INFO rec1 1 <NA> <NA> <NA> unknown\n")
+        buf.seek(0)
+        loaded = simpleder.load_rttm(buf)
+        self.assertEqual({"rec1": ref_segments}, loaded)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            ref_path = os.path.join(tmpdir, "ref.rttm")
+            hyp_path = os.path.join(tmpdir, "hyp.rttm")
+            simpleder.dump_rttm(
+                {"rec1": ref_segments, "rec2": [("A", 0.0, 2.0)]}, ref_path)
+            simpleder.dump_rttm(
+                {"rec1": [("1", 0.0, 1.0), ("2", 1.0, 2.5)]}, hyp_path)
+
+            res = der.main(
+                ["--ref", ref_path, "--hyp", hyp_path, "--detailed"])
+            self.assertAlmostEqual(2.0 / 4.5, res["der"], delta=1e-5)
+
+            res_json = der.main(
+                ["--ref", ref_path, "--hyp", hyp_path, "--json"])
+            self.assertAlmostEqual(2.0 / 4.5, res_json["der"], delta=1e-5)
+
+            # Unknown recording in hyp should raise ValueError
+            bad_hyp_path = os.path.join(tmpdir, "bad_hyp.rttm")
+            simpleder.dump_rttm({"unknown_rec": ref_segments}, bad_hyp_path)
+            with self.assertRaises(ValueError):
+                der.main(["--ref", ref_path, "--hyp", bad_hyp_path])
+
+    def test_rttm_invalid_inputs(self):
+        with self.assertRaises(TypeError):
+            simpleder.load_rttm(123)
+        with self.assertRaises(ValueError):
+            simpleder.load_rttm(["SPEAKER rec1 1 0.0\n"])
+        with self.assertRaises(ValueError):
+            simpleder.load_rttm(
+                ["SPEAKER rec1 1 0.0 -1.0 <NA> <NA> spk1 <NA>\n"])
+        with self.assertRaises(TypeError):
+            simpleder.dump_rttm("invalid", io.StringIO())
+        with self.assertRaises(TypeError):
+            simpleder.dump_rttm([("A", 0.0, 1.0)], 123)
 
 
 if __name__ == "__main__":
