@@ -4,98 +4,78 @@
 
 * [Overview](#overview)
 * [Diarization Error Rate](#diarization-error-rate)
+* [Jaccard Error Rate](#jaccard-error-rate)
 * [Implementation](#implementation)
 * [Tutorial](#tutorial)
 * [Citation](#citation)
 
 ## Overview
 
-This is a single-file lightweight library to compute Diarization Error Rate (DER).
+This is a single-file lightweight library to compute speaker diarization evaluation metrics:
 
-Features **NOT** supported in this library:
-
-* A full breakdown of the different components of DER (False Alarm, Miss, Overlap, Confusion).
-
-For more sophisticated metrics with this support, please use
-[pyannote-metrics](https://github.com/pyannote/pyannote-metrics) instead.
+* **Diarization Error Rate (DER)** with full component breakdown (`Miss`, `False Alarm`, `Confusion`) and optimal speaker mapping
+* **Jaccard Error Rate (JER)** with per-speaker breakdown and optimal speaker mapping
+* **Overlapped speech** support, plus optional `collar` tolerance and `skip_overlap` filtering
+* **Corpus-level evaluation** (`corpus_der` and `corpus_jer`) across multiple recordings
 
 To learn more about speaker diarization, here is a curated list of resources:
 [awesome-diarization](https://github.com/wq2012/awesome-diarization).
 
 ## Diarization Error Rate
 
-Diarization Error Rate (DER) is the most commonly used metrics for
-[speaker diarization](https://en.wikipedia.org/wiki/Speaker_diarisation).
-
-Its strict form is:
+Diarization Error Rate (DER) is the most commonly used metric for
+[speaker diarization](https://en.wikipedia.org/wiki/Speaker_diarisation):
 
 ```
-       False Alarm + Miss + Overlap + Confusion
-DER = ------------------------------------------
-                   Reference Length
+       False Alarm + Miss + Confusion
+DER = --------------------------------
+              Reference Length
 ```
 
-The definition of each term:
+The definition of each term (all measured in *seconds*, accounting for overlapped speech):
 
-* `Reference Length:` The total length of the reference (ground truth).
-* `False Alarm`: Length of segments which are considered as speech in
-  hypothesis, but not in reference.
-* `Miss`: Length of segments which are considered as speech in
-  reference, but not in hypothesis.
-* `Overlap`: Length of segments which are considered as overlapped speech
-  in hypothesis, but not in reference.
-* `Confusion`: Length of segments which are assigned to different speakers
-  in hypothesis and reference (after applying an optimal assignment).
+* `Reference Length`: Total speaker-time duration in the reference (ground truth), $\int N_{\text{ref}}(t) \, dt$.
+* `False Alarm`: Duration of hypothesis speakers in excess of reference speakers, $\int \max(0, N_{\text{hyp}}(t) - N_{\text{ref}}(t)) \, dt$.
+* `Miss`: Duration of reference speakers missed by the hypothesis, $\int \max(0, N_{\text{ref}}(t) - N_{\text{hyp}}(t)) \, dt$.
+* `Confusion`: Duration of active speakers assigned to the wrong speaker after applying an optimal 1-to-1 speaker mapping.
 
-The unit of each term is *seconds*.
-
-Note that DER can theoretically be larger than 1.0.
+Note that DER can be larger than `1.0`.
 
 References:
 
 * [pyannote-metrics documentation](https://pyannote.github.io/pyannote-metrics/reference.html)
 * [Xavier Anguera's thesis](http://www.xavieranguera.com/phdthesis/node108.html)
 
+## Jaccard Error Rate
+
+Jaccard Error Rate (JER), introduced for the DIHARD II challenge, evaluates diarization with equal weight for each reference speaker. Under an optimal 1-to-1 mapping between reference speakers $r \in S_{\text{ref}}$ and hypothesis speakers $h \in S_{\text{hyp}}$:
+
+$$\text{JER} = \frac{1}{|S_{\text{ref}}|} \sum_{r \in S_{\text{ref}}} \left(1 - \frac{\text{duration}(r \cap h)}{\text{duration}(r \cup h)}\right)$$
+
+Unmapped reference speakers receive a speaker error of `1.0`. Unlike DER, JER is always bounded in `[0.0, 1.0]`.
+
 ## Implementation
 
-This library allows efficient computation of DER including support for overlapped speech.
-
-The algorithm works as follows:
-
-1.  **Collar Pre-processing** (if `collar > 0`): We remove regions around reference boundaries from both the reference and the hypothesis. For every start/end time $t$ in the reference, the interval $[t - \text{collar}, t + \text{collar}]$ is excluded from scoring.
-
-2.  **Optimal Mapping**: We first align the speakers in the hypothesis to the reference by maximizing the total overlap duration between them. This is a linear sum assignment problem (also known as the weighted bipartite matching problem), which we solve using the Hungarian algorithm (via `scipy.optimize.linear_sum_assignment`). Let `Match` be the total overlap duration of this optimal mapping.
-
-3.  **Load Calculation**: We calculate a value called "Load", representing the total duration of speech that *requires* being matched. This accounts for overlapped speech.
-
-    Mathematically:
-    `Load` = $\int \max(N_{\text{ref}}(t), N_{\text{hyp}}(t)) dt$
-    where $N_{\text{ref}}(t)$ and $N_{\text{hyp}}(t)$ are the number of active speakers at time $t$ in reference and hypothesis, respectively.
-
-4.  **DER Calculation**:
-    `DER = (Load - Match) / Reference Length`
-
-    This formulation is mathematically equivalent to the standard definition `(Miss + False Alarm + Confusion) / Reference Length`.
+1. **Per-Speaker Canonicalization**: Overlapping or contiguous segments belonging to the same speaker are merged so each speaker's timeline consists of disjoint intervals.
+2. **Pre-processing (`collar` and `skip_overlap`)**:
+   * If `collar > 0`: For every reference boundary $t$, the interval $[t - \text{collar}, t + \text{collar}]$ (NIST `md-eval` convention) is excluded from both reference and hypothesis.
+   * If `skip_overlap=True`: Regions where $N_{\text{ref}}(t) > 1$ are excluded from both reference and hypothesis.
+3. **Optimal Mapping**: We solve the linear sum assignment problem via the Hungarian algorithm (`scipy.optimize.linear_sum_assignment`)—maximizing total overlap duration $\text{Match}$ for DER, or total Jaccard similarity for JER.
+4. **Error & Load Calculation**: Let $\text{Load} = \int \max(N_{\text{ref}}(t), N_{\text{hyp}}(t)) \, dt$. Then:
+   $$\text{Miss} + \text{False Alarm} + \text{Confusion} = \text{Load} - \text{Match}$$
+   $$\text{DER} = \frac{\text{Load} - \text{Match}}{\text{Reference Length}}$$
 
 ## Tutorial
 
 ### Install
 
-Install the package by:
-
 ```bash
 pip3 install simpleder
 ```
 
-or
-
-```bash
-python3 -m pip install simpleder
-```
-
 ### API
 
-Here is a minimal example:
+#### Basic DER and JER
 
 ```python
 import simpleder
@@ -111,15 +91,36 @@ hyp = [("1", 0.0, 0.8),
        ("3", 1.5, 1.8),
        ("1", 1.8, 2.0)]
 
-error = simpleder.DER(ref, hyp)
-
-print("DER={:.3f}".format(error))
+der = simpleder.DER(ref, hyp)
+jer = simpleder.JER(ref, hyp)
+print(f"DER={der:.3f}, JER={jer:.3f}")
+# DER=0.350, JER=0.381
 ```
 
-This should output:
+#### Options: `collar`, `skip_overlap`, and `detailed` Breakdown
 
+```python
+details = simpleder.DER(ref, hyp, collar=0.0, skip_overlap=False, detailed=True)
+# {
+#   'der': 0.35,
+#   'miss': 0.2,
+#   'false_alarm': 0.1,
+#   'confusion': 0.4,
+#   'ref_length': 2.0,
+#   'speaker_mapping': {'A': '1', 'B': '2'}
+# }
 ```
-DER=0.350
+
+#### Corpus-Level Evaluation (Multiple Recordings)
+
+`corpus_der` computes the micro-averaged DER across recordings, and `corpus_jer` averages per-speaker JER across all reference speakers in the corpus (accepting either `dict` or `list` inputs):
+
+```python
+refs = {"rec1": ref, "rec2": [("A", 0.0, 2.0)]}
+hyps = {"rec1": hyp, "rec2": [("1", 0.0, 2.0)]}
+
+total_der = simpleder.corpus_der(refs, hyps)
+total_jer = simpleder.corpus_jer(refs, hyps)
 ```
 
 ## Citation

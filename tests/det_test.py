@@ -1,6 +1,7 @@
 import numpy as np
 import unittest
 
+import simpleder
 from simpleder import der
 
 
@@ -12,13 +13,21 @@ class TestCheckInput(unittest.TestCase):
                ("B", 4.0, 5.0),
                ("A", 6.7, 9.0),
                ("C", 10.0, 12.0),
-               ("D", 12.0, 13.0)]
+               ("D", 12, 13)]
         hyp = [("A", 1.0, 3.0),
                ("B", 4.0, 4.8),
                ("A", 7.0, 9.0),
                ("C", 10.0, 13.0)]
         der.check_input(ref)
         der.check_input(hyp)
+
+    def test_not_a_list(self):
+        with self.assertRaises(TypeError):
+            der.check_input(("A", 1.0, 2.0))
+
+    def test_element_not_a_tuple(self):
+        with self.assertRaises(TypeError):
+            der.check_input([["A", 1.0, 2.0]])
 
     def test_missing_speaker(self):
         hyp = [("A", 1.0, 3.0),
@@ -35,6 +44,40 @@ class TestCheckInput(unittest.TestCase):
                (3, 10.0, 13.0)]
         with self.assertRaises(TypeError):
             der.check_input(hyp)
+
+    def test_wrong_timestamp_type(self):
+        with self.assertRaises(TypeError):
+            der.check_input([("A", "1.0", 2.0)])
+        with self.assertRaises(TypeError):
+            der.check_input([("A", True, 2.0)])
+
+    def test_non_finite_timestamp(self):
+        with self.assertRaises(ValueError):
+            der.check_input([("A", float("nan"), 2.0)])
+        with self.assertRaises(ValueError):
+            der.check_input([("A", 1.0, float("inf"))])
+
+    def test_start_greater_than_end(self):
+        with self.assertRaises(ValueError):
+            der.check_input([("A", 3.0, 2.0)])
+
+
+class TestMergeSpeakerIntervals(unittest.TestCase):
+    """Tests for the merge_speaker_intervals function."""
+
+    def test_overlap_and_contiguous_same_speaker(self):
+        segments = [
+            ("A", 0.0, 2.0),
+            ("A", 1.0, 3.0),
+            ("A", 3.0, 4.0),
+            ("B", 1.5, 2.5),
+            ("A", 5.0, 5.0),
+        ]
+        expected = [
+            ("A", 0.0, 4.0),
+            ("B", 1.5, 2.5),
+        ]
+        self.assertEqual(expected, der.merge_speaker_intervals(segments))
 
 
 class TestComputeIntersectionLength(unittest.TestCase):
@@ -66,6 +109,10 @@ class TestComputeTotalLength(unittest.TestCase):
                ("C", 10.0, 13.0)]
         self.assertEqual(8.0, der.compute_total_length(hyp))
 
+    def test_same_speaker_overlap_not_double_counted(self):
+        hyp = [("A", 0.0, 2.0), ("A", 1.0, 3.0)]
+        self.assertEqual(3.0, der.compute_total_length(hyp))
+
 
 class TestComputeLoadLength(unittest.TestCase):
     """Tests for the compute_load_length function."""
@@ -75,7 +122,6 @@ class TestComputeLoadLength(unittest.TestCase):
                ("B", 1.0, 2.0)]
         hyp = [("A", 0.0, 1.0),
                ("B", 1.0, 2.0)]
-        # Load length should be 2.0
         self.assertEqual(2.0, der.compute_load_length(ref, hyp))
 
     def test_overlap(self):
@@ -83,15 +129,12 @@ class TestComputeLoadLength(unittest.TestCase):
                ("B", 0.0, 1.0)]
         hyp = [("A", 0.0, 1.0),
                ("B", 0.0, 1.0)]
-        # Two speakers active from 0 to 1. Max active is 2.
-        # Length is 1 * 2 = 2.0
         self.assertEqual(2.0, der.compute_load_length(ref, hyp))
 
     def test_overlap_miss(self):
         ref = [("A", 0.0, 1.0),
                ("B", 0.0, 1.0)]
         hyp = [("A", 0.0, 1.0)]
-        # Ref has 2 speakers, Hyp has 1. Max is 2.
         self.assertEqual(2.0, der.compute_load_length(ref, hyp))
 
 
@@ -140,12 +183,20 @@ class TestDER(unittest.TestCase):
     def test_single_tuple_same(self):
         ref = [("A", 0.0, 1.0)]
         hyp = [("B", 0.0, 1.0)]
-        self.assertEqual(0.0, der.DER(ref, hyp))
+        self.assertEqual(0.0, simpleder.DER(ref, hyp))
 
     def test_single_tuple_all_miss(self):
         ref = [("A", 0.0, 1.0)]
         hyp = []
         self.assertEqual(1.0, der.DER(ref, hyp))
+
+    def test_empty_ref(self):
+        self.assertEqual(0.0, der.DER([], []))
+        self.assertEqual(0.0, der.DER([], [("A", 0.0, 1.0)]))
+        details = der.DER([], [("A", 0.0, 1.0)], detailed=True)
+        self.assertEqual(0.0, details["der"])
+        self.assertEqual(1.0, details["false_alarm"])
+        self.assertEqual(0.0, details["ref_length"])
 
     def test_single_tuple_separate(self):
         ref = [("A", 0.0, 1.0)]
@@ -203,6 +254,22 @@ class TestDER(unittest.TestCase):
                ("1", 1.8, 2.0)]
         self.assertAlmostEqual(0.35, der.DER(ref, hyp), delta=0.0001)
 
+    def test_three_tuples_detailed_breakdown(self):
+        ref = [("A", 0.0, 1.0),
+               ("B", 1.0, 1.5),
+               ("A", 1.6, 2.1)]
+        hyp = [("1", 0.0, 0.8),
+               ("2", 0.8, 1.4),
+               ("3", 1.5, 1.8),
+               ("1", 1.8, 2.0)]
+        details = der.DER(ref, hyp, detailed=True)
+        self.assertAlmostEqual(0.35, details["der"], delta=0.0001)
+        self.assertAlmostEqual(0.2, details["miss"], delta=0.0001)
+        self.assertAlmostEqual(0.1, details["false_alarm"], delta=0.0001)
+        self.assertAlmostEqual(0.4, details["confusion"], delta=0.0001)
+        self.assertAlmostEqual(2.0, details["ref_length"], delta=0.0001)
+        self.assertEqual({"A": "1", "B": "2"}, details["speaker_mapping"])
+
     def test_hyp_has_more_labels(self):
         ref = [("0", 0.0, 1.0),
                ("1", 1.0, 2.0),
@@ -234,98 +301,51 @@ class TestDER(unittest.TestCase):
                ("B", 0.0, 1.0)]
         hyp = [("1", 0.0, 1.0),
                ("2", 0.0, 1.0)]
-        # Perfect match. DER = 0.
         self.assertEqual(0.0, der.DER(ref, hyp))
 
     def test_overlap_miss(self):
         ref = [("A", 0.0, 1.0),
                ("B", 0.0, 1.0)]
         hyp = [("1", 0.0, 1.0)]
-        # Load length is 2.0.
-        # Match is 1.0 (one speaker matched).
-        # Ref total length is 2.0.
-        # DER = (2.0 - 1.0) / 2.0 = 0.5
         self.assertEqual(0.5, der.DER(ref, hyp))
 
     def test_overlap_fa(self):
         ref = [("A", 0.0, 1.0)]
         hyp = [("1", 0.0, 1.0),
                ("2", 0.0, 1.0)]
-        # Load length is 2.0 (Hyp has 2 speakers).
-        # Match is 1.0.
-        # Ref total length is 1.0.
-        # DER = (2.0 - 1.0) / 1.0 = 1.0
         self.assertEqual(1.0, der.DER(ref, hyp))
 
     def test_overlap_confusion(self):
-        # Case where optimal mapping cannot match everyone
         ref = [("A", 0.0, 1.0)]
         hyp = [("B", 0.0, 1.0)]
-        # If A can map to B, DER is 0.
         self.assertEqual(0.0, der.DER(ref, hyp))
 
     def test_overlap_confusion_enforced(self):
-        # Enforce confusion by having A match 1 elsewhere better
-        # Ref: A(0-10), A(20-21)
-        # Hyp: 1(0-10), 2(20-21)
-        # Mapping A->1 gives match 10.
-        # Then at 20-21: Ref A vs Hyp 2.
-        # Since A->1, A cannot match 2.
-        # So at 20-21: N_ref=1, N_hyp=1. Match=0.
-        # Load=1.
-        # Error = 1.
-        # Segment 0-10: Error = 0.
-        # Total Error = 1.
-        # Ref Total = 11.
-        # DER = 1/11.
         ref = [("A", 0.0, 10.0), ("A", 20.0, 21.0)]
         hyp = [("1", 0.0, 10.0), ("2", 20.0, 21.0)]
         self.assertAlmostEqual(1.0 / 11.0, der.DER(ref, hyp), delta=0.0001)
 
     def test_many_speakers_overlap(self):
-        # Ref: A, B, C (all 0-1)
-        # Hyp: 1, 2 (all 0-1)
-        # Match: 2 (A->1, B->2). C is Missed.
-        # Load: 3 (max(3, 2)).
-        # DER = (3 - 2) / 3 = 1/3.
         ref = [("A", 0.0, 1.0), ("B", 0.0, 1.0), ("C", 0.0, 1.0)]
         hyp = [("1", 0.0, 1.0), ("2", 0.0, 1.0)]
         self.assertAlmostEqual(1.0 / 3.0, der.DER(ref, hyp), delta=0.0001)
 
+    def test_same_speaker_duplicate_segments_no_negative_der(self):
+        ref = [("A", 0.0, 1.0), ("A", 0.0, 1.0)]
+        hyp = [("1", 0.0, 1.0), ("1", 0.0, 1.0)]
+        self.assertEqual(0.0, der.DER(ref, hyp))
+
     def test_collar_simple(self):
-        # Ref: 0.0-1.0. Collar 0.1 -> Exclude [-0.1, 0.1] and [0.9, 1.1]
-        # Valid Ref: 0.1-0.9 (Length 0.8)
-        # Hyp: 0.0-1.0. Valid Hyp: 0.1-0.9 (Length 0.8)
-        # DER = 0.
         ref = [("A", 0.0, 1.0)]
         hyp = [("A", 0.0, 1.0)]
         self.assertEqual(0.0, der.DER(ref, hyp, collar=0.1))
 
     def test_collar_miss_boundary(self):
-        # Ref: 0.0-1.0. Collar 0.25 -> Exclude [-0.25, 0.25] and [0.75, 1.25].
-        # Valid Ref: 0.25-0.75 (Length 0.5)
-        # Hyp: 0.0-0.8.
-        # Valid Hyp: [0.0, 0.8] - Exclusions
-        # = [0.25, 0.75] intersect [0.0, 0.8] = [0.25, 0.75].
-        # (Hyp also trimmed by 0.75-1.25 exclusion)
-        # Hyp 0.75-0.8 is in exclusion.
-        # So Matches = 0.5. Load = 0.5. DER = 0.
         ref = [("A", 0.0, 1.0)]
         hyp = [("A", 0.0, 0.8)]
         self.assertEqual(0.0, der.DER(ref, hyp, collar=0.25))
 
     def test_collar_false_alarm_boundary(self):
-        # Ref: 0.0-1.0. Collar 0.1 -> Valid 0.1-0.9.
-        # Hyp: 0.0-1.2.
-        # Valid Hyp: 0.1-0.9 from Ref(0-1), and 1.1-1.2?
-        # Exclusion: [-0.1, 0.1], [0.9, 1.1].
-        # Hyp has 1.1-1.2 left?
-        # WAIT: Exclusion is based on Ref boundaries.
-        # Ref boundaries: 0.0, 1.0.
-        # Hyp part 1.1-1.2 is NOT in exclusion. So it is FA.
-        # Matches: 0.1-0.9 (0.8).
-        # Load: 0.1-0.9 (0.8) + 1.1-1.2 (0.1) = 0.9.
-        # DER = (0.9 - 0.8) / 0.8 = 0.1/0.8 = 0.125
         ref = [("A", 0.0, 1.0)]
         hyp = [("A", 0.0, 1.2)]
         self.assertAlmostEqual(0.125,
@@ -333,27 +353,56 @@ class TestDER(unittest.TestCase):
                                delta=0.0001)
 
     def test_collar_adjacent(self):
-        # Ref: A(0-1), B(1-2). Collar 0.1.
-        # Boundaries: 0, 1, 2.
-        # Exclusions: [-0.1, 0.1], [0.9, 1.1], [1.9, 2.1].
-        # Ref Valid: A(0.1-0.9), B(1.1-1.9). Total 1.6.
-        # Hyp: A(0-1.05), B(1.05-2).
-        # Hyp Valid:
-        # A: (0.1-0.9). 0.9-1.05 is excluded (0.9-1.1). So A contributes 0.8.
-        # B: 1.05-2. 1.05-1.1 excluded. 1.1-1.9 valid. 1.9-2 excluded.
-        # B contributes 0.8.
-        # Total Match: 1.6.
-        # DER = 0.
         ref = [("A", 0.0, 1.0), ("B", 1.0, 2.0)]
         hyp = [("A", 0.0, 1.05), ("B", 1.05, 2.0)]
         self.assertEqual(0.0, der.DER(ref, hyp, collar=0.1))
+
+    def test_collar_same_speaker_contiguous_not_excluded(self):
+        # Speaker A speaks continuously from 0.0 to 2.0 (represented as two
+        # contiguous segments). With collar=0.25, only 0.0 and 2.0 are
+        # boundaries (not 1.0). Scored region is [0.25, 1.75] (length 1.5).
+        # Hypothesis misses [0.9, 1.1] (length 0.2 inside scored region).
+        ref = [("A", 0.0, 1.0), ("A", 1.0, 2.0)]
+        hyp = [("1", 0.0, 0.9), ("1", 1.1, 2.0)]
+        self.assertAlmostEqual(
+            0.2 / 1.5, der.DER(ref, hyp, collar=0.25), delta=0.0001)
+
+    def test_skip_overlap(self):
+        # Ref: A(0-2), B(1-3). Overlap is [1, 2].
+        # With skip_overlap=True, scored regions are [0, 1] (A) and [2, 3] (B),
+        # total ref_length = 2.0.
+        # Hyp has 1(0-2): after removing [1, 2], hyp has 1(0-1).
+        # Match = 1.0 (A->1), Miss = 1.0 (B on [2, 3]), DER = 1.0 / 2.0 = 0.5.
+        ref = [("A", 0.0, 2.0), ("B", 1.0, 3.0)]
+        hyp = [("1", 0.0, 2.0)]
+        details = der.DER(ref, hyp, skip_overlap=True, detailed=True)
+        self.assertAlmostEqual(0.5, details["der"], delta=0.0001)
+        self.assertAlmostEqual(1.0, details["miss"], delta=0.0001)
+        self.assertAlmostEqual(0.0, details["false_alarm"], delta=0.0001)
+        self.assertAlmostEqual(0.0, details["confusion"], delta=0.0001)
+        self.assertAlmostEqual(2.0, details["ref_length"], delta=0.0001)
+        # Also test skip_overlap=True when there is no overlap in ref
+        self.assertEqual(
+            0.0, der.DER([("A", 0.0, 1.0)], [("1", 0.0, 1.0)],
+                         skip_overlap=True))
+
+    def test_invalid_options(self):
+        ref = [("A", 0.0, 1.0)]
+        hyp = [("1", 0.0, 1.0)]
+        with self.assertRaises(ValueError):
+            der.DER(ref, hyp, collar=-0.1)
+        with self.assertRaises(TypeError):
+            der.DER(ref, hyp, collar="0.1")
+        with self.assertRaises(TypeError):
+            der.DER(ref, hyp, skip_overlap="yes")
+        with self.assertRaises(TypeError):
+            der.DER(ref, hyp, detailed="yes")
 
 
 class TestComputeMergedExclusionIntervals(unittest.TestCase):
     def test_basic(self):
         ref = [("A", 10.0, 20.0)]
         collar = 1.0
-        # 10->[9,11], 20->[19,21]
         expected = [(9.0, 11.0), (19.0, 21.0)]
         self.assertEqual(expected,
                          der.compute_merged_exclusion_intervals(ref, collar))
@@ -361,18 +410,23 @@ class TestComputeMergedExclusionIntervals(unittest.TestCase):
     def test_merge(self):
         ref = [("A", 10.0, 12.0)]
         collar = 1.5
-        # 10->[8.5, 11.5], 12->[10.5, 13.5]
-        # Overlap: 10.5 < 11.5. Merge to [8.5, 13.5]
         expected = [(8.5, 13.5)]
         self.assertEqual(expected,
                          der.compute_merged_exclusion_intervals(ref, collar))
+
+    def test_zero_and_invalid_collar(self):
+        ref = [("A", 10.0, 12.0)]
+        self.assertEqual([], der.compute_merged_exclusion_intervals(ref, 0.0))
+        with self.assertRaises(TypeError):
+            der.compute_merged_exclusion_intervals(ref, True)
+        with self.assertRaises(ValueError):
+            der.compute_merged_exclusion_intervals(ref, -1.0)
 
 
 class TestSubtractIntervals(unittest.TestCase):
     def test_basic(self):
         segments = [("A", 0.0, 10.0)]
         exclusions = [(0.0, 1.0), (9.0, 10.0)]
-        # Should result in (1.0, 9.0)
         expected = [("A", 1.0, 9.0)]
         self.assertEqual(expected,
                          der.subtract_intervals(segments, exclusions))
@@ -380,10 +434,129 @@ class TestSubtractIntervals(unittest.TestCase):
     def test_split(self):
         segments = [("A", 0.0, 10.0)]
         exclusions = [(4.0, 6.0)]
-        # Should result in (0.0, 4.0), (6.0, 10.0)
         expected = [("A", 0.0, 4.0), ("A", 6.0, 10.0)]
         self.assertEqual(expected,
                          der.subtract_intervals(segments, exclusions))
+
+    def test_empty_exclusions_and_non_overlapping(self):
+        segments = [("A", 2.0, 4.0)]
+        self.assertEqual(segments, der.subtract_intervals(segments, []))
+        exclusions = [(0.0, 1.0), (5.0, 6.0)]
+        self.assertEqual(segments,
+                         der.subtract_intervals(segments, exclusions))
+
+
+class TestJER(unittest.TestCase):
+    """Tests for the JER function."""
+
+    def test_perfect_match(self):
+        ref = [("A", 0.0, 1.0), ("B", 1.0, 2.0)]
+        hyp = [("1", 0.0, 1.0), ("2", 1.0, 2.0)]
+        self.assertEqual(0.0, simpleder.JER(ref, hyp))
+
+    def test_empty_ref_and_hyp(self):
+        self.assertEqual(0.0, simpleder.JER([], []))
+        self.assertEqual(
+            {"jer": 0.0, "speaker_jer": {}, "speaker_mapping": {}},
+            simpleder.JER([], [("1", 0.0, 1.0)], detailed=True))
+
+    def test_all_miss(self):
+        ref = [("A", 0.0, 1.0), ("B", 1.0, 2.0)]
+        hyp = []
+        details = simpleder.JER(ref, hyp, detailed=True)
+        self.assertEqual(1.0, details["jer"])
+        self.assertEqual({"A": 1.0, "B": 1.0}, details["speaker_jer"])
+        self.assertEqual({}, details["speaker_mapping"])
+
+    def test_single_speaker_miss_and_fa(self):
+        # Ref A: [0.0, 1.0], Hyp 1: [0.5, 1.5]
+        # Intersection = 0.5, Union = 1.5 -> Jaccard = 1/3 -> JER = 2/3.
+        ref = [("A", 0.0, 1.0)]
+        hyp = [("1", 0.5, 1.5)]
+        self.assertAlmostEqual(2.0 / 3.0, simpleder.JER(ref, hyp), delta=1e-6)
+
+    def test_jer_vs_der_optimal_mapping_difference(self):
+        # Ref A: [0, 10] (dur 10), Ref B: [10, 11] (dur 1)
+        # Hyp 1: [8, 11] (dur 3)
+        # J(A, 1) = 2 / 11; J(B, 1) = 1 / 3.
+        # Since 1/3 > 2/11, JER maps B -> 1, giving JER = (1 + 2/3) / 2 = 5/6.
+        ref = [("A", 0.0, 10.0), ("B", 10.0, 11.0)]
+        hyp = [("1", 8.0, 11.0)]
+        details = simpleder.JER(ref, hyp, detailed=True)
+        self.assertAlmostEqual(5.0 / 6.0, details["jer"], delta=1e-6)
+        self.assertEqual({"B": "1"}, details["speaker_mapping"])
+        self.assertAlmostEqual(1.0, details["speaker_jer"]["A"], delta=1e-6)
+        self.assertAlmostEqual(
+            2.0 / 3.0, details["speaker_jer"]["B"], delta=1e-6)
+
+    def test_invalid_detailed(self):
+        with self.assertRaises(TypeError):
+            simpleder.JER([("A", 0.0, 1.0)], [("1", 0.0, 1.0)], detailed=1)
+
+
+class TestCorpusEvaluation(unittest.TestCase):
+    """Tests for corpus_der and corpus_jer."""
+
+    def test_corpus_der_dict_micro_average(self):
+        # Rec 1: ref length 1.0, DER = 1.0 (error = 1.0)
+        # Rec 2: ref length 9.0, DER = 0.0 (error = 0.0)
+        # Micro-averaged Corpus DER = (1.0 + 0.0) / (1.0 + 9.0) = 0.1
+        # (whereas unweighted mean would be 0.5).
+        refs = {
+            "rec1": [("A", 0.0, 1.0)],
+            "rec2": [("B", 0.0, 9.0)],
+        }
+        hyps = {
+            "rec1": [],
+            "rec2": [("1", 0.0, 9.0)],
+        }
+        self.assertAlmostEqual(
+            0.1, simpleder.corpus_der(refs, hyps), delta=1e-6)
+        details = simpleder.corpus_der(refs, hyps, detailed=True)
+        self.assertAlmostEqual(0.1, details["der"], delta=1e-6)
+        self.assertAlmostEqual(1.0, details["miss"], delta=1e-6)
+        self.assertAlmostEqual(10.0, details["ref_length"], delta=1e-6)
+        self.assertIn("rec1", details["per_recording"])
+        self.assertIn("rec2", details["per_recording"])
+
+    def test_corpus_der_list_and_empty(self):
+        refs = [[("A", 0.0, 1.0)], [("B", 0.0, 1.0)]]
+        hyps = [[("1", 0.0, 1.0)], []]
+        details = simpleder.corpus_der(refs, hyps, detailed=True)
+        self.assertAlmostEqual(0.5, details["der"], delta=1e-6)
+        self.assertIsInstance(details["per_recording"], list)
+        self.assertEqual(0.0, simpleder.corpus_der([], []))
+
+    def test_corpus_jer_speaker_weighted(self):
+        # Rec 1: 1 speaker with JER = 1.0
+        # Rec 2: 3 speakers all with JER = 0.0
+        # Corpus JER across all 4 ref speakers = 1.0 / 4 = 0.25.
+        refs = [
+            [("A", 0.0, 1.0)],
+            [("B", 0.0, 1.0), ("C", 1.0, 2.0), ("D", 2.0, 3.0)],
+        ]
+        hyps = [
+            [],
+            [("1", 0.0, 1.0), ("2", 1.0, 2.0), ("3", 2.0, 3.0)],
+        ]
+        self.assertAlmostEqual(
+            0.25, simpleder.corpus_jer(refs, hyps), delta=1e-6)
+        details = simpleder.corpus_jer(refs, hyps, detailed=True)
+        self.assertAlmostEqual(0.25, details["jer"], delta=1e-6)
+        self.assertEqual(4, details["num_ref_speakers"])
+        self.assertEqual(0.0, simpleder.corpus_jer({}, {}))
+
+    def test_corpus_input_errors(self):
+        with self.assertRaises(ValueError):
+            simpleder.corpus_der({"a": []}, {"b": []})
+        with self.assertRaises(ValueError):
+            simpleder.corpus_der([[]], [[], []])
+        with self.assertRaises(TypeError):
+            simpleder.corpus_der({"a": []}, [[]])
+        with self.assertRaises(TypeError):
+            simpleder.corpus_der([], [], detailed="yes")
+        with self.assertRaises(TypeError):
+            simpleder.corpus_jer([], [], detailed="yes")
 
 
 if __name__ == "__main__":
