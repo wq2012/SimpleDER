@@ -1,4 +1,4 @@
-from . import der
+from . import cli
 
 if __name__ == "__main__":  # pragma: no cover
-    der.main()
+    cli.main()

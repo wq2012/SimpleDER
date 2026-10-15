@@ -2,7 +2,7 @@
 
 import setuptools
 
-VERSION = "0.0.7"
+VERSION = "0.0.8"
 
 with open("README.md", "r") as file_object:
     LONG_DESCRIPTION = file_object.read()
@@ -23,7 +23,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     entry_points={
         "console_scripts": [
-            "simpleder=simpleder.der:main",
+            "simpleder=simpleder.cli:main",
         ],
     },
     classifiers=[
